@@ -40,11 +40,9 @@ namespace DeliveryService.Api.Controllers
                 : Error(result.ErrorMessage);
         }
 
-        [HttpPut("{id}"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update([FromRoute]string id, [FromBody]UpdatePointCommand command)
+        [HttpPut, Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update([FromBody]UpdatePointCommand command)
         {
-            command.Id = id;
-
             var result = await _bus.Send(command);
 
             return result.Success

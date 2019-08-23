@@ -6,10 +6,10 @@ namespace DeliveryService.Domain.Commands
 {
     public class UpdatePointCommand : BaseCommand<DomainResult>
     {
-        [JsonIgnore]
+        [Required(ErrorMessage = "Id is required")]
         public string Id { get; set; }
 
-        [Required(ErrorMessage = "Name")]
+        [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
     }
 }
