@@ -1,7 +1,9 @@
 ﻿using DeliveryService.Infra.Api.Extensions;
+using DeliveryService.Infra.Data.Seeding;
+using DeliveryService.Infra.IoC;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,12 +20,16 @@ namespace DeliveryService.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddJwtAuthentication(Configuration);
-            services.AddCustomSwagger();
-            services.AddCustomApiVersioning();
-            services.AddVersionedApiExplorer(x => x.GroupNameFormat = "'v'VVV");
-            services.AddCustomResponseCompression();
-            services.AddCustomMvcCore();
+            services.AddJwtAuthentication(Configuration)
+                .AddCustomSwagger()
+                .AddCustomApiVersioning()
+                .AddVersionedApiExplorer(x => x.GroupNameFormat = "'v'VVV")
+                .AddCustomResponseCompression()
+                .AddMediatR(typeof(Startup))
+                .AddCustomMvcCore();
+
+            DependencyInjectionBootstrapper.RegisterServices(services);
+            SeeddingContext.Seed(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

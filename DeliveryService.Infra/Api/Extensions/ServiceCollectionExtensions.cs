@@ -36,6 +36,7 @@ namespace DeliveryService.Infra.Api.Extensions
                     });
                     options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "Bearer", Enumerable.Empty<string>() } });
                     options.OperationFilter<ApiVersionFilter>();
+                    options.SchemaFilter<SwaggerExcludeFilter>();
                     var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
                     foreach (var apiVersionDescription in provider.ApiVersionDescriptions)
                     {

@@ -1,6 +1,6 @@
 using DeliveryService.Infra.Api.Response;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using System.Net;
 
 namespace DeliveryService.Infra.Api.Controller
 {
@@ -10,8 +10,15 @@ namespace DeliveryService.Infra.Api.Controller
         protected IActionResult Success<TResult>(TResult result)
             => Ok(EnvelopeResponse.Success(result));
 
-        protected IActionResult Error(Exception exception) 
-            => BadRequest(EnvelopeResponse.Error(exception.Message));
+        protected IActionResult Error(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
+        {
+            var result = new ObjectResult(EnvelopeResponse.Error(message, code))
+            {
+                StatusCode = (int)code
+            };
+
+            return result;
+        }
 
         protected IActionResult Success()
             => Ok(EnvelopeResponse.Success());
