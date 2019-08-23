@@ -19,7 +19,12 @@ namespace DeliveryService.Infra.IoC
 
             services.AddScoped<IRequestHandler<CreateUserSessionCommand, DomainResult<string>>, AccountCommandHandler>();
 
+            services.AddScoped<IRequestHandler<CreatePointCommand, DomainResult>, PointCommandHandler>();
+            services.AddScoped<IRequestHandler<InactivePointCommand, DomainResult>, PointCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdatePointCommand, DomainResult>, PointCommandHandler>();
+
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IPointRepository, PointRepository>();
         }
     }
 }

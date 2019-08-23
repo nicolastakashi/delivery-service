@@ -20,6 +20,12 @@ namespace DeliveryService.Infra.Api.Controller
             return result;
         }
 
+        protected IActionResult Created()
+            => new ObjectResult(EnvelopeResponse.Success())
+            {
+                StatusCode = (int)HttpStatusCode.Created
+            };
+
         protected IActionResult Success()
             => Ok(EnvelopeResponse.Success());
     }
