@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  deliveryservice.api:
+    image: ${DOCKER_REGISTRY-}deliveryserviceapi
+    build:
+      context: .
+      dockerfile: DeliveryService.Api/Dockerfile
+  mongo:
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'mongodata:/data/db'
+
+volumes:
+  mongodata:
