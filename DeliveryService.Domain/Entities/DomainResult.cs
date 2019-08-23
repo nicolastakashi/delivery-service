@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 
 namespace DeliveryService.Domain.Entities
@@ -51,21 +50,6 @@ namespace DeliveryService.Domain.Entities
             return RegisterFailure(errorMessage);
         }
 
-        public static DomainResult CombineDomains(params DomainResult[] results)
-        {
-            return CombineDomains(", ", results);
-        }
-
-        public static DomainResult CombineDomains<T>(params DomainResult<T>[] results)
-        {
-            return CombineDomains(", ", results);
-        }
-
-        public static DomainResult CombineDomains<T>(string errorMessagesSeparator, params DomainResult<T>[] results)
-        {
-            var untyped = results.Select(result => (DomainResult)result).ToArray();
-            return CombineDomains(errorMessagesSeparator, untyped);
-        }
     }
 
     public class DomainResult<T>
