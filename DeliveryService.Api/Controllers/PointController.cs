@@ -28,7 +28,7 @@ namespace DeliveryService.Api.Controllers
             var result = await _bus.Send(command);
 
             return result.Success
-                ? Created()
+                ? Created(result.Value)
                 : Error(result.ErrorMessage);
         }
 

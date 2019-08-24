@@ -7,6 +7,7 @@ using DeliveryService.Infra.Data.Context;
 using DeliveryService.Infra.Data.Repositories.Write;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 
 namespace DeliveryService.Infra.IoC
 {
@@ -19,7 +20,7 @@ namespace DeliveryService.Infra.IoC
 
             services.AddScoped<IRequestHandler<CreateUserSessionCommand, DomainResult<string>>, AccountCommandHandler>();
 
-            services.AddScoped<IRequestHandler<CreatePointCommand, DomainResult>, PointCommandHandler>();
+            services.AddScoped<IRequestHandler<CreatePointCommand, DomainResult<ObjectId>>, PointCommandHandler>();
             services.AddScoped<IRequestHandler<InactivePointCommand, DomainResult>, PointCommandHandler>();
             services.AddScoped<IRequestHandler<UpdatePointCommand, DomainResult>, PointCommandHandler>();
 

@@ -26,6 +26,12 @@ namespace DeliveryService.Infra.Api.Controller
                 StatusCode = (int)HttpStatusCode.Created
             };
 
+        protected IActionResult Created<TResult>(TResult value)
+            => new ObjectResult(EnvelopeResponse.Success(value))
+            {
+                StatusCode = (int)HttpStatusCode.Created
+            };
+
         protected IActionResult Success()
             => Ok(EnvelopeResponse.Success());
     }

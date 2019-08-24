@@ -5,15 +5,17 @@ VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Api", "DeliveryService.Api\DeliveryService.Api.csproj", "{6C72C135-BC34-4145-B023-1254B514C317}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Infra", "DeliveryService.Infra\DeliveryService.Infra.csproj", "{56080F63-AC61-42A9-B978-896AC1527BD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Infra", "DeliveryService.Infra\DeliveryService.Infra.csproj", "{56080F63-AC61-42A9-B978-896AC1527BD8}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DA9F5952-2F67-4FC9-A25D-0F1250FE80C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Infra.Data", "DeliveryService.Infra.Data\DeliveryService.Infra.Data.csproj", "{131DF8A2-6A47-4821-82A3-5B269CCF0A05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Infra.Data", "DeliveryService.Infra.Data\DeliveryService.Infra.Data.csproj", "{131DF8A2-6A47-4821-82A3-5B269CCF0A05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Infra.IoC", "DeliveryService.Infra.IoC\DeliveryService.Infra.IoC.csproj", "{DAB9C4FF-BE82-4EE2-B3BC-E2578D5B65FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Infra.IoC", "DeliveryService.Infra.IoC\DeliveryService.Infra.IoC.csproj", "{DAB9C4FF-BE82-4EE2-B3BC-E2578D5B65FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Domain", "DeliveryService.Domain\DeliveryService.Domain.csproj", "{E195D4B5-55FA-45E9-8178-156360848E9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Domain", "DeliveryService.Domain\DeliveryService.Domain.csproj", "{E195D4B5-55FA-45E9-8178-156360848E9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Test.Unit", "DeliveryService.Test.Unit\DeliveryService.Test.Unit.csproj", "{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{E195D4B5-55FA-45E9-8178-156360848E9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E195D4B5-55FA-45E9-8178-156360848E9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E195D4B5-55FA-45E9-8178-156360848E9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

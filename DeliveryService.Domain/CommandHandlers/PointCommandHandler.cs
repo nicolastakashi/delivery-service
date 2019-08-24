@@ -2,13 +2,14 @@
 using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
 using MediatR;
+using MongoDB.Bson;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DeliveryService.Domain.CommandHandlers
 {
     public class PointCommandHandler :
-        IRequestHandler<CreatePointCommand, DomainResult>,
+        IRequestHandler<CreatePointCommand, DomainResult<ObjectId>>,
         IRequestHandler<InactivePointCommand, DomainResult>,
         IRequestHandler<UpdatePointCommand, DomainResult>
     {
@@ -32,10 +33,10 @@ namespace DeliveryService.Domain.CommandHandlers
 
             await _pointRepository.InactivePointAsync(point);
 
-            return DomainResult.Ok();
+            return DomainResult.Ok(point.Id.ToString());
         }
 
-        public async Task<DomainResult> Handle(CreatePointCommand command, CancellationToken cancellationToken)
+        public async Task<DomainResult<ObjectId>> Handle(CreatePointCommand command, CancellationToken cancellationToken)
         {
             var point = Point.Create(command);
 
@@ -43,12 +44,12 @@ namespace DeliveryService.Domain.CommandHandlers
 
             if(alreadyExists)
             {
-                return DomainResult.Failure<string>("Point already exists");
+                return DomainResult.Failure<ObjectId>("Point already exists");
             }
 
             await _pointRepository.CreateAsync(point);
 
-            return DomainResult.Ok();
+            return DomainResult.Ok(point.Id);
         }
 
         public async Task<DomainResult> Handle(UpdatePointCommand command, CancellationToken cancellationToken)
