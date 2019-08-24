@@ -1,4 +1,6 @@
 ﻿using DeliveryService.Domain.Commands;
+using DeliveryService.Domain.Queries;
+using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +14,12 @@ namespace DeliveryService.Api.Controllers
     public class PointController : BaseController
     {
         private readonly IMediator _bus;
+        private readonly IPointReadOnlyRepository _pointReadOnlyRepository;
 
-        public PointController(IMediator bus)
+        public PointController(IMediator bus, IPointReadOnlyRepository pointReadOnlyRepository)
         {
             _bus = bus;
+            _pointReadOnlyRepository = pointReadOnlyRepository;
         }
 
         [HttpPost, Authorize(Roles = "Admin")]
@@ -50,5 +54,20 @@ namespace DeliveryService.Api.Controllers
                 : Error(result.ErrorMessage);
         }
 
+        [HttpGet("{id}"), Authorize]
+        public async Task<IActionResult> Find([FromRoute]string id)
+        {
+            var point = await _pointReadOnlyRepository.Find(id);
+
+            return Success(point);
+        }
+
+        [HttpGet, Authorize]
+        public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
+        {
+            var point = await _pointReadOnlyRepository.Get(resourceQuery);
+
+            return Success(point);
+        }
     }
 }

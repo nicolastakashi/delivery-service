@@ -2,7 +2,7 @@
 
 namespace DeliveryService.Domain.Queries.Result
 {
-    public class GetUserToLoginQueryResult
+    public class UserToLoginQueryResult
     {
         public ObjectId Id { get; set; }
         public string Role { get; set; }

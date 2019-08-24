@@ -13,8 +13,4 @@
     <ProjectReference Include="..\DeliveryService.Infra\DeliveryService.Infra.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\Readonly\" />
-  </ItemGroup>
-
 </Project>

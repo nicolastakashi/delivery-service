@@ -12,6 +12,6 @@
             set => pageSize = value > MaxPageSize ? MaxPageSize : value;
         }
 
-        public string LastId { get; set; }
+        public int Page { get; set; } = 1;
     }
 }

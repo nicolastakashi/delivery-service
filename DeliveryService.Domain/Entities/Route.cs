@@ -16,7 +16,7 @@ namespace DeliveryService.Domain.Entities
         {
         }
 
-        protected Route(Point origin, Point destination, int time, int cost)
+        public Route(Point origin, Point destination, int time, int cost)
         {
             Id = ObjectId.GenerateNewId();
             Origin = origin;

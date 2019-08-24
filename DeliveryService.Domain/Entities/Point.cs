@@ -12,7 +12,7 @@ namespace DeliveryService.Domain.Entities
         {
         }
 
-        protected Point(string name)
+        public Point(string name)
         {
             Id = ObjectId.GenerateNewId();
             Name = name;

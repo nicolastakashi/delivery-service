@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -21,7 +22,9 @@ namespace DeliveryService.Infra.Data.Seeding
             if (AlredySeeded(context)) return;
 
             CreateUsers(context);
-            InsertSeedInfo(context);
+            CreatePoints(context);
+            CreateRoutes(context);
+            CreateSeedInfo(context);
         }
 
         public static void CreateUsers(MongoContext context)
@@ -36,10 +39,46 @@ namespace DeliveryService.Infra.Data.Seeding
             context.Db.GetCollection<User>(MongoCollections.User).InsertMany(users);
         }
 
-        private static bool AlredySeeded(MongoContext context) 
+        public static void CreatePoints(MongoContext context)
+        {
+            try
+            {
+                var points = BuildPoints();
+
+                context.GetCollection<Point>(MongoCollections.Point).InsertMany(points);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void CreateRoutes(MongoContext context)
+        {
+            var points = BuildPoints();
+            var routes = new List<Route>
+            {
+                new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "C"),1,20),
+                new Route(points.FirstOrDefault(x => x.Name == "C"), points.FirstOrDefault(x => x.Name == "B"), 1,12),
+                new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "E"), 30,5),
+                new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "H"), 10,1),
+                new Route(points.FirstOrDefault(x => x.Name == "H"), points.FirstOrDefault(x => x.Name == "E"), 30,1),
+                new Route(points.FirstOrDefault(x => x.Name == "E"), points.FirstOrDefault(x => x.Name == "D"), 3,5),
+                new Route(points.FirstOrDefault(x => x.Name == "D"), points.FirstOrDefault(x => x.Name == "F"), 4,50),
+                new Route(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "G"), 40,50),
+                new Route(points.FirstOrDefault(x => x.Name == "G"), points.FirstOrDefault(x => x.Name == "B"), 64,73),
+                new Route(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "I"), 45,50),
+                new Route(points.FirstOrDefault(x => x.Name == "I"), points.FirstOrDefault(x => x.Name == "B"), 65,5),
+            };
+
+            context.GetCollection<Route>(MongoCollections.Route).InsertMany(routes);
+
+        }
+
+        private static bool AlredySeeded(MongoContext context)
             => context.Db.GetCollection<object>("seedinfo").AsQueryable().Any();
 
-        private static void InsertSeedInfo(MongoContext context) => context.Db.GetCollection<object>("seedinfo")
+        private static void CreateSeedInfo(MongoContext context) => context.Db.GetCollection<object>("seedinfo")
                 .InsertOne(new { Id = ObjectId.GenerateNewId(), Active = true, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now });
 
         private static string Hash(string value)
@@ -59,5 +98,20 @@ namespace DeliveryService.Infra.Data.Seeding
                 return hash.ToString();
             }
         }
+
+
+        private static List<Point> BuildPoints()
+            => new List<Point>
+            {
+                new Point("A"),
+                new Point("B"),
+                new Point("C"),
+                new Point("D"),
+                new Point("E"),
+                new Point("F"),
+                new Point("G"),
+                new Point("H"),
+                new Point("I")
+            };
     }
 }
