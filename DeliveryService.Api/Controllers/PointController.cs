@@ -65,9 +65,9 @@ namespace DeliveryService.Api.Controllers
         [HttpGet, Authorize]
         public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
         {
-            var point = await _pointReadOnlyRepository.Get(resourceQuery);
+            var points = await _pointReadOnlyRepository.Get(resourceQuery);
 
-            return Success(point);
+            return Success(points);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Enums;
+using DeliveryService.Domain.ValueObject;
 using System.Collections.Generic;
 using System.Linq;
 

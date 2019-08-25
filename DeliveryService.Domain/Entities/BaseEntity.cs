@@ -1,7 +1,5 @@
 ﻿using MongoDB.Bson;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DeliveryService.Domain.Entities
 {
@@ -11,5 +9,11 @@ namespace DeliveryService.Domain.Entities
         public bool Active { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
+
+        public void Inactive()
+        {
+            Active = false;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

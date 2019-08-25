@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using DeliveryService.Domain.CommandHandlers;
 using DeliveryService.Domain.Commands;
-using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
+using DeliveryService.Domain.ValueObject;
 using FluentAssertions;
 using MongoDB.Bson;
 using Moq;

@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using DeliveryService.Domain.ValueObject;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;

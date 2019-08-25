@@ -1,9 +1,11 @@
 ﻿using DeliveryService.Domain.CommandHandlers;
 using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Entities;
+using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Domain.Service;
 using DeliveryService.Infra.Data.Context;
+using DeliveryService.Infra.Data.Repositories.ReadOnly;
 using DeliveryService.Infra.Data.Repositories.Write;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,8 +26,14 @@ namespace DeliveryService.Infra.IoC
             services.AddScoped<IRequestHandler<InactivePointCommand, DomainResult>, PointCommandHandler>();
             services.AddScoped<IRequestHandler<UpdatePointCommand, DomainResult>, PointCommandHandler>();
 
+            services.AddScoped<IRequestHandler<CreateConnectionCommand, DomainResult<ObjectId>>, ConnectionCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdatedConnectionCommand, DomainResult>, ConnectionCommandHandler>();
+            
+
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IPointRepository, PointRepository>();
+            services.AddScoped<IPointReadOnlyRepository, PointReadOnlyRepository>();
+            services.AddScoped<IConnectionRepository, ConnectionRepository>();
         }
     }
 }

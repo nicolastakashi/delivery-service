@@ -1,4 +1,4 @@
-﻿using DeliveryService.Domain.Entities;
+﻿using DeliveryService.Domain.ValueObject;
 using System.Threading.Tasks;
 
 namespace DeliveryService.Domain.Repositories.Write

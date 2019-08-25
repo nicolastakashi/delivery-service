@@ -1,5 +1,6 @@
 ﻿using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
+using DeliveryService.Infra.CustomExceptions;
 using DeliveryService.Infra.Data.Constants;
 using DeliveryService.Infra.Data.Context;
 using MongoDB.Driver;
@@ -27,7 +28,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurs to get user", ex);
+                throw new UserFriendlyException("An error occurs to get user", ex);
             }
         }
     }

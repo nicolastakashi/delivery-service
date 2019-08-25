@@ -1,11 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using DeliveryService.Domain.Entities;
-using DeliveryService.Domain.Repositories.Write;
+﻿using DeliveryService.Domain.Repositories.Write;
+using DeliveryService.Domain.ValueObject;
+using DeliveryService.Infra.CustomExceptions;
 using DeliveryService.Infra.Data.Constants;
 using DeliveryService.Infra.Data.Context;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
+using System.Threading.Tasks;
 
 namespace DeliveryService.Infra.Data.Repositories.Write
 {
@@ -26,7 +27,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             }
             catch (Exception ex)
             {
-                throw new Exception("Error to create a point", ex);
+                throw new UserFriendlyException("Error to create a point", ex);
             }
         }
 
@@ -40,7 +41,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             }
             catch (Exception ex)
             {
-                throw new Exception("Error to find the point.", ex);
+                throw new UserFriendlyException("Error to find the point.", ex);
             }
         }
 
@@ -54,7 +55,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             }
             catch (Exception ex)
             {
-                throw new Exception("Error to verify if point already exists", ex);
+                throw new UserFriendlyException("Error to verify if point already exists", ex);
             }
         }
 
@@ -67,7 +68,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             }
             catch (Exception ex)
             {
-                throw new Exception("Error to remove a point", ex);
+                throw new UserFriendlyException("Error to remove a point", ex);
             }
         }
 
@@ -80,7 +81,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             }
             catch (Exception ex)
             {
-                throw new Exception("Error to update a point", ex);
+                throw new UserFriendlyException("Error to update a point", ex);
             }
         }
     }

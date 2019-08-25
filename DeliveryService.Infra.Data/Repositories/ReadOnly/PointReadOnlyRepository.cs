@@ -1,9 +1,11 @@
-﻿using DeliveryService.Domain.Entities;
-using DeliveryService.Domain.Queries;
+﻿using DeliveryService.Domain.Queries;
 using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
+using DeliveryService.Domain.ValueObject;
+using DeliveryService.Infra.CustomExceptions;
 using DeliveryService.Infra.Data.Constants;
 using DeliveryService.Infra.Data.Context;
+using DeliveryService.Infra.Data.Extensions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -21,24 +23,35 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
         }
 
         public async Task<PointQueryResult> Find(string id)
-            => await _mongoContext.GetCollection<Point>(MongoCollections.Point)
-                .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
-                .Project(x => new PointQueryResult { Name = x.Name, Id = x.Id })
-                .FirstOrDefaultAsync();
+        {
+            try
+            {
+                return await _mongoContext.GetCollection<Point>(MongoCollections.Point)
+                    .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
+                    .Project(x => new PointQueryResult { Name = x.Name, Id = x.Id })
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("Error to find the connection", ex);
+            }
+        }
 
         public async Task<PagedQueryResult<PointQueryResult>> Get(GetPagedResourceQuery resource)
         {
-            var query = _mongoContext.GetCollection<Point>(MongoCollections.Point)
-                .Find(x => x.Active)
-                .Project(x => new PointQueryResult { Id = x.Id, Name = x.Name });
+            try
+            {
+                var result = await _mongoContext.GetCollection<Point>(MongoCollections.Point)
+                    .Find(x => x.Active)
+                    .Project(x => new PointQueryResult { Id = x.Id, Name = x.Name })
+                    .GetPagedAsync(resource);
 
-
-            var countOfDocuments = query.CountDocumentsAsync();
-            var points = query.Limit(resource.PageSize).Skip((resource.Page - 1) * resource.PageSize).ToListAsync();
-
-            await Task.WhenAll(countOfDocuments, points);
-
-            return PagedQueryResult<PointQueryResult>.Create(points.Result, countOfDocuments.Result, (countOfDocuments.Result / resource.PageSize));
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("Error to get connections", ex);
+            }
         }
     }
 }
