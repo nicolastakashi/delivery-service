@@ -57,7 +57,7 @@ namespace DeliveryService.Api.Controllers
         [HttpGet("{id}"), Authorize]
         public async Task<IActionResult> Find([FromRoute]string id)
         {
-            var point = await _pointReadOnlyRepository.Find(id);
+            var point = await _pointReadOnlyRepository.FindAsync(id);
 
             return Success(point);
         }
@@ -65,7 +65,7 @@ namespace DeliveryService.Api.Controllers
         [HttpGet, Authorize]
         public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
         {
-            var points = await _pointReadOnlyRepository.Get(resourceQuery);
+            var points = await _pointReadOnlyRepository.GetAsync(resourceQuery);
 
             return Success(points);
         }

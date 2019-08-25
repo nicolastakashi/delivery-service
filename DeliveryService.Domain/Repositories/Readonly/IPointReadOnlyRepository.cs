@@ -6,7 +6,7 @@ namespace DeliveryService.Domain.Repositories.Readonly
 {
     public interface IPointReadOnlyRepository
     {
-        Task<PagedQueryResult<PointQueryResult>> Get(GetPagedResourceQuery quere);
-        Task<PointQueryResult> Find(string id);
+        Task<PagedQueryResult<PointQueryResult>> GetAsync(GetPagedResourceQuery quere);
+        Task<PointQueryResult> FindAsync(string id);
     }
 }

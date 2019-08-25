@@ -1,4 +1,6 @@
 ﻿using DeliveryService.Domain.Commands;
+using DeliveryService.Domain.Queries;
+using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +14,12 @@ namespace DeliveryService.Api.Controllers
     public class ConnectionController : BaseController
     {
         private readonly IMediator _bus;
+        private readonly IConnectionReadOnlyRepository _connectionReadOnlyRepository;
 
-        public ConnectionController(IMediator bus)
+        public ConnectionController(IMediator bus, IConnectionReadOnlyRepository connectionReadOnlyRepository)
         {
             _bus = bus;
+            _connectionReadOnlyRepository = connectionReadOnlyRepository;
         }
 
         [HttpPost, Authorize(Roles = "Admin")]
@@ -38,7 +42,7 @@ namespace DeliveryService.Api.Controllers
                 : NoContent();
         }
 
-        [HttpDelete("{id}"), Authorize]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> Inactive([FromRoute] string id)
         {
             var result = await _bus.Send(InactiveConnectionCommand.Create(id));
@@ -46,6 +50,22 @@ namespace DeliveryService.Api.Controllers
             return result.Fail
                 ? Error(result.ErrorMessage)
                 : NoContent();
+        }
+
+        [HttpGet("{id}"), Authorize]
+        public async Task<IActionResult> Find([FromRoute]string id)
+        {
+            var connection = await _connectionReadOnlyRepository.FindAsync(id);
+
+            return Success(connection);
+        }
+
+        [HttpGet, Authorize]
+        public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
+        {
+            var connections = await _connectionReadOnlyRepository.GetAsync(resourceQuery);
+
+            return Success(connections);
         }
     }
 }

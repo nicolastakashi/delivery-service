@@ -22,7 +22,7 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
             _mongoContext = mongoContext;
         }
 
-        public async Task<PointQueryResult> Find(string id)
+        public async Task<PointQueryResult> FindAsync(string id)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
             }
         }
 
-        public async Task<PagedQueryResult<PointQueryResult>> Get(GetPagedResourceQuery resource)
+        public async Task<PagedQueryResult<PointQueryResult>> GetAsync(GetPagedResourceQuery resource)
         {
             try
             {
