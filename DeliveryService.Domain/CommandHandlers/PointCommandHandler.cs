@@ -34,7 +34,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             await _pointRepository.InactivePointAsync(point);
 
-            return DomainResult.Ok(point.Id.ToString());
+            return DomainResult.Ok();
         }
 
         public async Task<DomainResult<ObjectId>> Handle(CreatePointCommand command, CancellationToken cancellationToken)
