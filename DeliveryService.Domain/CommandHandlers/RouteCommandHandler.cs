@@ -32,10 +32,7 @@ namespace DeliveryService.Domain.CommandHandlers
                 return DomainResult.Failure<string>("Origin or Destination not found");
             }
 
-            var route = Route.Create(command, origin, destination);
-
-
-
+            var route = Route.Create(origin, destination);
 
             return DomainResult.Ok();
         }

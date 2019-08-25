@@ -10,11 +10,5 @@ namespace DeliveryService.Domain.Commands
 
         [Required(ErrorMessage = "Destination is required")]
         public string DestinationPointId { get; set; }
-
-        [Range(1, int.MaxValue, ErrorMessage = "Time must be greater than zero")]
-        public int Time { get; set; }
-
-        [Range(1, int.MaxValue, ErrorMessage = "Cost must be greater than zero")]
-        public int Cost { get; set; }
     }
 }
