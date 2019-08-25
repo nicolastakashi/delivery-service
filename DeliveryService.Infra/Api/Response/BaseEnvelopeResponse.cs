@@ -13,10 +13,14 @@ namespace DeliveryService.Infra.Api.Response
             Code = code;
         }
 
-        public TModel Result { get; }
+        protected BaseEnvelopeResponse()
+        {
+        }
+
+        public TModel Result { get; protected set; }
         public bool IsSuccess => string.IsNullOrWhiteSpace(ErrorMessage);
-        public string ErrorMessage { get; }
-        public DateTime OccuredIn { get; }
-        public HttpStatusCode Code { get; set; }
+        public string ErrorMessage { get; protected set; }
+        public DateTime OccuredIn { get; protected set; }
+        public HttpStatusCode Code { get; protected set; }
     }
 }

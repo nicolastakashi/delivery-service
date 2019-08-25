@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Infra.IoC",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Domain", "DeliveryService.Domain\DeliveryService.Domain.csproj", "{E195D4B5-55FA-45E9-8178-156360848E9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Test.Unit", "DeliveryService.Test.Unit\DeliveryService.Test.Unit.csproj", "{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryService.Test.Unit", "DeliveryService.Test.Unit\DeliveryService.Test.Unit.csproj", "{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryService.Test.Integration", "DeliveryService.Test.Integration\DeliveryService.Test.Integration.csproj", "{6ADDFAD0-A043-404C-BAFC-1BF13F2AADF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B60D5CC0-0AB3-486C-8206-55BEA50BE6AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ADDFAD0-A043-404C-BAFC-1BF13F2AADF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ADDFAD0-A043-404C-BAFC-1BF13F2AADF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ADDFAD0-A043-404C-BAFC-1BF13F2AADF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ADDFAD0-A043-404C-BAFC-1BF13F2AADF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,12 +11,15 @@ namespace DeliveryService.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration,IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            HostingEnvironment = hostingEnvironment;
+
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment HostingEnvironment {get;}
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -29,7 +32,11 @@ namespace DeliveryService.Api
                 .AddCustomMvcCore();
 
             DependencyInjectionBootstrapper.RegisterServices(services);
-            SeeddingContext.Seed(Configuration);
+
+            if(HostingEnvironment.IsDevelopment() || HostingEnvironment.IsProduction())
+            {
+                SeeddingContext.Seed(Configuration);
+            }
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
