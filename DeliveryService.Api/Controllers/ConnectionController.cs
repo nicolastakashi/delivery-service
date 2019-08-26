@@ -29,24 +29,26 @@ namespace DeliveryService.Api.Controllers
         [HttpPost, Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<ObjectId>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Create([FromBody]CreateConnectionCommand command)
         {
             var result = await _bus.Send(command);
 
             return result.Success
                 ? Created(result.Value)
-                : Error(result.ErrorMessage);
+                : Error(result.ErrorMessage, result.Code);
         }
 
         [HttpPut, Authorize(Roles = "Admin")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Update([FromBody] UpdatedConnectionCommand command)
         {
             var result = await _bus.Send(command);
 
             return result.Fail
-                ? Error(result.ErrorMessage)
+                ? Error(result.ErrorMessage, result.Code)
                 : NoContent();
         }
 
@@ -58,7 +60,7 @@ namespace DeliveryService.Api.Controllers
             var result = await _bus.Send(InactiveConnectionCommand.Create(id));
 
             return result.Fail
-                ? Error(result.ErrorMessage)
+                ? Error(result.ErrorMessage, result.Code)
                 : NoContent();
         }
 

@@ -3,6 +3,7 @@ using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
 using MediatR;
 using MongoDB.Bson;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,7 +41,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             if (alreadyExists)
             {
-                return DomainResult.Failure<ObjectId>("Connection already exists.");
+                return DomainResult.Failure<ObjectId>("Connection already exists.", HttpStatusCode.Conflict);
             }
 
             await _connectionRepository.CreateAsync(connection);
@@ -58,19 +59,24 @@ namespace DeliveryService.Domain.CommandHandlers
 
             if (origin.Result is null || destination.Result is null)
             {
-                return DomainResult.Failure<ObjectId>("Origin or Destination not found");
+                return DomainResult.Failure<string>("Origin or Destination not found");
             }
 
             var connectionResult = connection.Result;
+
+            if(connectionResult is null)
+            {
+                return DomainResult.Failure<string>("Connection not found");
+            }
+
             var arePointsChanged = connectionResult.ArePointsChanged(origin.Result, destination.Result);
 
             connectionResult.Update(origin.Result, destination.Result, command.Time, command.Cost);
 
             if (arePointsChanged && await _connectionRepository.AlreadyExistsAsync(connectionResult))
             {
-                return DomainResult.Failure<ObjectId>("Connection already exists.");
+                return DomainResult.Failure<string>("Connection already exists.", HttpStatusCode.Conflict);
             }
-
 
             await _connectionRepository.UpdateAsync(connectionResult);
 
@@ -80,6 +86,11 @@ namespace DeliveryService.Domain.CommandHandlers
         public async Task<DomainResult> Handle(InactiveConnectionCommand command, CancellationToken cancellationToken)
         {
             var connection = await _connectionRepository.FindAsync(command.Id);
+
+            if (connection is null)
+            {
+                return DomainResult.Failure<string>("Connection not found");
+            }
 
             connection.Inactive();
 

@@ -25,12 +25,6 @@ namespace DeliveryService.Domain.ValueObject
         internal static Point Create(CreatePointCommand command)
             => new Point(command.Name);
 
-        internal void Inactive()
-        {
-            Active = false;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
         internal void Update(UpdatePointCommand command)
         {
             Name = command.Name;

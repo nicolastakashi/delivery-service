@@ -29,6 +29,7 @@ namespace DeliveryService.Api.Controllers
         [HttpPost, Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<ObjectId>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Create([FromBody]CreatePointCommand command)
         {
             var result = await _bus.Send(command);
@@ -55,6 +56,7 @@ namespace DeliveryService.Api.Controllers
         [HttpPut, Authorize(Roles = "Admin")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Update([FromBody]UpdatePointCommand command)
         {
             var result = await _bus.Send(command);

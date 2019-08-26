@@ -8,6 +8,7 @@ using DeliveryService.Infra.Data.Context;
 using DeliveryService.Infra.Data.Extensions;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System;
 using System.Threading.Tasks;
 
@@ -55,9 +56,14 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
         {
             try
             {
+                var search = resource.Search.ToLower();
+
                 return await _mongoContext.GetCollection<Connection>(MongoCollections.Connection)
-                    .Find(x => x.Active)
-                    .Project(x => new ConnectionQueryResult
+                    .AsQueryable()
+                    .Where(x => x.Active)
+                    .Search(x => x.Origin.Name.ToLower().Contains(search) || x.Destination.Name.ToLower().Contains(search), search)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Select(x => new ConnectionQueryResult
                     {
                         Id = x.Id,
                         Cost = x.Cost,

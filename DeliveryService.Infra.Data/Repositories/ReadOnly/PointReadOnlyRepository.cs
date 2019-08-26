@@ -8,6 +8,7 @@ using DeliveryService.Infra.Data.Context;
 using DeliveryService.Infra.Data.Extensions;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System;
 using System.Threading.Tasks;
 
@@ -42,8 +43,11 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
             try
             {
                 var result = await _mongoContext.GetCollection<Point>(MongoCollections.Point)
-                    .Find(x => x.Active)
-                    .Project(x => new PointQueryResult { Id = x.Id, Name = x.Name })
+                    .AsQueryable()
+                    .Where(p => p.Active)
+                    .Search(p => p.Name.ToLower().Contains(resource.Search.ToLower()), resource.Search)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Select(p => new PointQueryResult { Id = p.Id, Name = p.Name })
                     .GetPagedAsync(resource);
 
                 return result;

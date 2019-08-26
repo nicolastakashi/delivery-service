@@ -3,6 +3,7 @@ using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
 using MediatR;
 using MongoDB.Bson;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,6 +38,11 @@ namespace DeliveryService.Domain.CommandHandlers
             }
 
             var route = Route.Create(origin, destination);
+
+            if(await _routeRepository.AlreadyExistsAsync(route))
+            {
+                return DomainResult.Failure<ObjectId>("Route already exists", HttpStatusCode.Conflict);
+            }
 
             await _routeRepository.CreateAsync(route);
 

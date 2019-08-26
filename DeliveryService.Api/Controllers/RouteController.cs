@@ -23,6 +23,7 @@ namespace DeliveryService.Api.Controllers
         [HttpPost, Authorize]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<ObjectId>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Create([FromBody]CreateRouteCommand command)
         {
             var result = await _mediator.Send(command);
@@ -35,6 +36,7 @@ namespace DeliveryService.Api.Controllers
         [HttpPut, Authorize]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Update([FromBody]UpdateRouteCommand command)
         {
             var result = await _mediator.Send(command);

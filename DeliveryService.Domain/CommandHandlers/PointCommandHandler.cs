@@ -4,6 +4,7 @@ using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Domain.ValueObject;
 using MediatR;
 using MongoDB.Bson;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace DeliveryService.Domain.CommandHandlers
         {
             var point = await _pointRepository.FindAsync(command.Id);
 
-            if(point is null)
+            if (point is null)
             {
                 return DomainResult.Failure<string>("Point not found");
             }
@@ -43,9 +44,9 @@ namespace DeliveryService.Domain.CommandHandlers
 
             var alreadyExists = await _pointRepository.AlreadyExistsAsync(point);
 
-            if(alreadyExists)
+            if (alreadyExists)
             {
-                return DomainResult.Failure<ObjectId>("Point already exists");
+                return DomainResult.Failure<ObjectId>("Point already exists", HttpStatusCode.Conflict);
             }
 
             await _pointRepository.CreateAsync(point);
@@ -68,7 +69,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             if (alreadyExists)
             {
-                return DomainResult.Failure<string>("Point already exists");
+                return DomainResult.Failure<string>("Point already exists", HttpStatusCode.Conflict);
             }
 
             await _pointRepository.UpdateAsync(point);
