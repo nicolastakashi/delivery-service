@@ -1,4 +1,5 @@
 ﻿using DeliveryService.Domain.Commands;
+using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
 using DeliveryService.Infra.Api.Response;
 using MediatR;
@@ -14,10 +15,12 @@ namespace DeliveryService.Api.Controllers
     public class RouteController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IRouteReadOnlyRepository _routeReadOnlyRepository;
 
-        public RouteController(IMediator mediator)
+        public RouteController(IMediator mediator, IRouteReadOnlyRepository routeReadOnlyRepository)
         {
             _mediator = mediator;
+            _routeReadOnlyRepository = routeReadOnlyRepository;
         }
 
         [HttpPost, Authorize(Roles = "Admin")]

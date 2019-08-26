@@ -21,7 +21,6 @@ namespace DeliveryService.Domain.Entities
         public int Count => adjacency.Count;
         public bool HasEdge(ObjectId origin, ObjectId destination) => adjacency[origin].Any(p => p.Node == destination);
 
-
         public bool AddEdge(ObjectId origin, ObjectId destination, decimal weight)
         {
             if (HasEdge(origin, destination)) return false;

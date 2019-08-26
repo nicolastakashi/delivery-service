@@ -22,6 +22,12 @@ namespace DeliveryService.Domain.ValueObject
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public Point SetId(string id)
+        {
+            Id = ObjectId.Parse(id);
+            return this;
+        }
+
         internal static Point Create(CreatePointCommand command)
             => new Point(command.Name);
 
