@@ -37,5 +37,10 @@ namespace DeliveryService.Domain.Entities
 
         private string BuildName()
             => $"From {Origin.Name} To {Destination.Name}";
+
+        internal bool ArePointsChanged(Point origin, Point destination)
+        {
+            return Origin.Equals(origin) is false || Destination.Equals(destination) is false;
+        }
     }
 }

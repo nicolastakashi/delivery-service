@@ -20,7 +20,7 @@ namespace DeliveryService.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost, Authorize]
+        [HttpPost, Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<ObjectId>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
@@ -30,16 +30,28 @@ namespace DeliveryService.Api.Controllers
 
             return result.Success
                 ? Created(result.Value)
-                : Error(result.ErrorMessage);
+                : Error(result.ErrorMessage, result.Code);
         }
 
-        [HttpPut, Authorize]
+        [HttpPut, Authorize(Roles = "Admin")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> Update([FromBody]UpdateRouteCommand command)
         {
             var result = await _mediator.Send(command);
+
+            return result.Success
+                ? NoContent()
+                : Error(result.ErrorMessage, result.Code);
+        }
+
+        [HttpDelete("{id}"), Authorize(Roles = "Admin")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Inactive([FromRoute]string id)
+        {
+            var result = await _mediator.Send(InactiveRouteCommand.Create(id));
 
             return result.Success
                 ? NoContent()

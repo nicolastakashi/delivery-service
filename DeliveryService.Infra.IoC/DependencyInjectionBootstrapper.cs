@@ -32,6 +32,7 @@ namespace DeliveryService.Infra.IoC
 
             services.AddScoped<IRequestHandler<CreateRouteCommand, DomainResult<ObjectId>>, RouteCommandHandler>();
             services.AddScoped<IRequestHandler<UpdateRouteCommand, DomainResult>, RouteCommandHandler>();
+            services.AddScoped<IRequestHandler<InactiveRouteCommand, DomainResult>, RouteCommandHandler>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IPointRepository, PointRepository>();
