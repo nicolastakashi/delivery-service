@@ -5,6 +5,7 @@ using DeliveryService.Infra.Data.Context;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DeliveryService.Infra.Data.Repositories.Write
@@ -20,8 +21,20 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             Collection = collection;
         }
 
-        public virtual Task<bool> AlreadyExistsAsync(TEntity entity)
-            => throw new NotImplementedException();
+
+        public Task<bool> AlreadyExistsAsync(Expression<Func<TEntity, bool>> expression)
+        {
+            try
+            {
+                return Context.GetCollection<TEntity>(Collection)
+                    .Find(expression)
+                    .AnyAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException($"Error to check if {nameof(TEntity)} exists.");
+            }
+        }
 
         public virtual async Task CreateAsync(TEntity entity)
         {

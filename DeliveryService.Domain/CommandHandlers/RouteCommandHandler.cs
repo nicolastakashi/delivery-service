@@ -37,7 +37,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             var route = Route.Create(origin.Result, destination.Result);
 
-            if (await _routeRepository.AlreadyExistsAsync(route))
+            if (await _routeRepository.AlreadyExistsAsync(x => x.Origin.Equals(route.Origin) && x.Destination.Equals(route.Destination) && x.Active))
             {
                 return DomainResult.Failure<ObjectId>("Route already exists", HttpStatusCode.Conflict);
             }
@@ -70,7 +70,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             route.Update(origin.Result, destination.Result);
 
-            if(arePointsChanged && await _routeRepository.AlreadyExistsAsync(route))
+            if(arePointsChanged && await _routeRepository.AlreadyExistsAsync(x => x.Origin.Equals(route.Origin) && x.Destination.Equals(route.Destination) && x.Active))
             {
                 return DomainResult.Failure<string>("Route already exists", HttpStatusCode.Conflict);
             }

@@ -35,7 +35,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             var connection = new Connection(origin, destination, command.Time, command.Cost);
 
-            var alreadyExists = await _connectionRepository.AlreadyExistsAsync(connection);
+            var alreadyExists = await _connectionRepository.AlreadyExistsAsync(x => x.Origin.Equals(connection.Origin) && x.Destination.Equals(connection.Destination) && x.Active);
 
             if (alreadyExists)
             {
@@ -74,7 +74,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             connection.Update(origin, destination, command.Time, command.Cost);
 
-            if (arePointsChanged && await _connectionRepository.AlreadyExistsAsync(connection))
+            if (arePointsChanged && await _connectionRepository.AlreadyExistsAsync(x => x.Origin.Equals(connection.Origin) && x.Destination.Equals(connection.Destination) && x.Active))
             {
                 return DomainResult.Failure<string>("Connection already exists.", HttpStatusCode.Conflict);
             }

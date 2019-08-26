@@ -42,7 +42,7 @@ namespace DeliveryService.Domain.CommandHandlers
         {
             var point = Point.Create(command);
 
-            var alreadyExists = await _pointRepository.AlreadyExistsAsync(point);
+            var alreadyExists = await _pointRepository.AlreadyExistsAsync(x => x.Name == point.Name && x.Active);
 
             if (alreadyExists)
             {
@@ -65,7 +65,7 @@ namespace DeliveryService.Domain.CommandHandlers
 
             point.Update(command);
 
-            var alreadyExists = await _pointRepository.AlreadyExistsAsync(point);
+            var alreadyExists = await _pointRepository.AlreadyExistsAsync(x => x.Name == point.Name && x.Active);
 
             if (alreadyExists)
             {

@@ -8,6 +8,7 @@ using FluentAssertions;
 using MongoDB.Bson;
 using Moq;
 using System;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -134,7 +135,7 @@ namespace DeliveryService.Test.Unit.Command
         private void SetupAlreadyExistsConnection(bool alreadyExists)
         {
             _connectionRepositoryMock
-                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Connection>()))
+                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Expression<Func<Connection,bool>>>()))
                 .Returns(Task.FromResult(alreadyExists));
         }
 
