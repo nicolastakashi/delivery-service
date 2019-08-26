@@ -34,8 +34,8 @@ To get the localhost solution running we just need the following tools:
 
 - .NET Core SDK
 - Docker & Docker Compose
-- Text editor
-- Console - (Preferably Visual Studio Code)
+- Text editor - (Preferably Visual Studio Code)
+- Console
 
 ## Running the app
 
