@@ -25,17 +25,15 @@ namespace DeliveryService.Domain.CommandHandlers
 
         public async Task<DomainResult<ObjectId>> Handle(CreateConnectionCommand command, CancellationToken cancellationToken)
         {
-            var origin = _pointRepository.FindAsync(command.OriginPointId);
-            var destination = _pointRepository.FindAsync(command.DestinationPointId);
+            var origin = await _pointRepository.FindAsync(command.OriginPointId);
+            var destination = await _pointRepository.FindAsync(command.DestinationPointId);
 
-            await Task.WhenAll(origin, destination);
-
-            if (origin.Result is null || destination.Result is null)
+            if (origin is null || destination is null)
             {
                 return DomainResult.Failure<ObjectId>("Origin or Destination not found");
             }
 
-            var connection = new Connection(origin.Result, destination.Result, command.Time, command.Cost);
+            var connection = new Connection(origin, destination, command.Time, command.Cost);
 
             var alreadyExists = await _connectionRepository.AlreadyExistsAsync(connection);
 
@@ -51,34 +49,37 @@ namespace DeliveryService.Domain.CommandHandlers
 
         public async Task<DomainResult> Handle(UpdatedConnectionCommand command, CancellationToken cancellationToken)
         {
-            var origin = _pointRepository.FindAsync(command.OriginPointId);
-            var destination = _pointRepository.FindAsync(command.DestinationPointId);
-            var connection = _connectionRepository.FindAsync(command.Id);
+            var origin = await _pointRepository.FindAsync(command.OriginPointId);
+            var destination = await _pointRepository.FindAsync(command.DestinationPointId);
 
-            await Task.WhenAll(origin, destination, connection);
-
-            if (origin.Result is null || destination.Result is null)
+            if (origin is null || destination is null)
             {
                 return DomainResult.Failure<string>("Origin or Destination not found");
             }
 
-            var connectionResult = connection.Result;
+            if (origin.Equals(destination))
+            {
+                return DomainResult.Failure<string>("You can't create a connection to the same origin and destination");
+            }
 
-            if(connectionResult is null)
+            var connection = await _connectionRepository.FindAsync(command.Id);
+
+
+            if (connection is null)
             {
                 return DomainResult.Failure<string>("Connection not found");
             }
 
-            var arePointsChanged = connectionResult.ArePointsChanged(origin.Result, destination.Result);
+            var arePointsChanged = connection.ArePointsChanged(origin, destination);
 
-            connectionResult.Update(origin.Result, destination.Result, command.Time, command.Cost);
+            connection.Update(origin, destination, command.Time, command.Cost);
 
-            if (arePointsChanged && await _connectionRepository.AlreadyExistsAsync(connectionResult))
+            if (arePointsChanged && await _connectionRepository.AlreadyExistsAsync(connection))
             {
                 return DomainResult.Failure<string>("Connection already exists.", HttpStatusCode.Conflict);
             }
 
-            await _connectionRepository.UpdateAsync(connectionResult);
+            await _connectionRepository.UpdateAsync(connection);
 
             return DomainResult.Ok();
         }

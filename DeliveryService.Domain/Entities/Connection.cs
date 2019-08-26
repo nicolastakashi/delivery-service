@@ -15,7 +15,7 @@ namespace DeliveryService.Domain.Entities
         {
         }
 
-        public Connection(Point origin, Point destination,decimal time, decimal cost )
+        public Connection(Point origin, Point destination, decimal time, decimal cost)
         {
             Id = ObjectId.GenerateNewId();
             Origin = origin;
@@ -36,7 +36,7 @@ namespace DeliveryService.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        internal bool ArePointsChanged(Point origin, Point destination) 
+        internal bool ArePointsChanged(Point origin, Point destination)
             => Origin.Equals(origin) is false || Destination.Equals(destination) is false;
     }
 }
