@@ -27,3 +27,18 @@ Based on what was required and the information contained in the specification, a
 - Design Patterns
 - Clean Code
 - Automated Tests (Unit and Integration)
+
+## Tools
+
+To get the localhost solution running we just need the following tools:
+
+- .NET Core SDK
+- Docker & Docker Compose
+- Text editor
+- Console - (Preferably Visual Studio Code)
+
+## Running the app
+
+After cloning the project and having the above tools installed, simply run the command below to run the localhost application:
+
+`` $ docker-compose -f docker-compose.yml -f docker-compose.override.yml``
