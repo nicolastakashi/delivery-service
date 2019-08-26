@@ -8,7 +8,7 @@ services:
       dockerfile: DeliveryService.Api/Dockerfile
   mongo:
     restart: always
+    image: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    image: mongo

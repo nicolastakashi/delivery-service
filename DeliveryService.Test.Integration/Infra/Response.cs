@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace DeliveryService.Test.Integration
+namespace DeliveryService.Test.Integration.Infra
 {
     public class Response<TModel>
     {

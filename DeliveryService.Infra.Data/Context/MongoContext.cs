@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 
@@ -7,6 +8,7 @@ namespace DeliveryService.Infra.Data.Context
     public class MongoContext : IMongoContext
     {
         private readonly MongoClient _client;
+
         public IMongoDatabase Db
            => _client.GetDatabase("deliveryservice");
 
@@ -16,6 +18,7 @@ namespace DeliveryService.Infra.Data.Context
         public MongoContext(IConfiguration configuration)
         {
             RegisterConventions();
+
             _client = new MongoClient(configuration.GetConnectionString("MongoDb"));
         }
 

@@ -28,7 +28,8 @@ namespace DeliveryService.Api
                 .AddVersionedApiExplorer(x => x.GroupNameFormat = "'v'VVV")
                 .AddCustomResponseCompression()
                 .AddMediatR(typeof(Startup))
-                .AddCustomMvcCore();
+                .AddCustomMvcCore()
+                .AddHealthChecks();
 
             DependencyInjectionBootstrapper.RegisterServices(services);
             SeeddingContext.Seed(Configuration, HostingEnvironment);
@@ -37,6 +38,7 @@ namespace DeliveryService.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app
+                .UseHealthChecks("/health")
                 .UseExceptionHandlerMiddleware()
                 .UseResponseCompression()
                 .UseForwardedHeaders()

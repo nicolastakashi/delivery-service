@@ -6,7 +6,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Testing
       - ASPNETCORE_URLS=http://+:80
     ports:
-      - "56019:80"
+      - "56020:80"
+    depends_on:
+      - mongo
   mongo:
     ports:
       - "27018:27017"
