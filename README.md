@@ -50,11 +50,11 @@ Currently there are two types of tests implemented, unit tests and integration t
 ### Unit Tests:
 To perform unit tests through the console just run the command below:
 
-`` `dotnet test. \ DeliveryService.Test.Unit \ DeliveryService.Test.Unit.csproj` ``
+``dotnet test. \ DeliveryService.Test.Unit \ DeliveryService.Test.Unit.csproj``
 
 ### Integration Tests:
 Integration tests have a high execution cost when compared to unit tests, because every time we run the command to run our service integration tests, a dedicated docker container for provisioning tests is provisioned, so we have the warm up time for this infrastructure.
 
 To run the integration tests through the console just run the command below:
 
-`` `dotnet test. \ DeliveryService.Test.Integration \ DeliveryService.Test.Integration.csproj` ``
+``dotnet test. \ DeliveryService.Test.Integration \ DeliveryService.Test.Integration.csproj``
