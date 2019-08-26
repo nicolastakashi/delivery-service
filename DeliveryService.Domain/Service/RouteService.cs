@@ -26,12 +26,8 @@ namespace DeliveryService.Domain.Service
 
             for (int index = 0; index < connections.Count(); index++)
             {
-                var connection = connections[index];
-                var origin = connection.Origin;
-                var destination = connection.Destination;
-                var weight = unitOfMeasure == UnitOfMeasure.Cost ? connection.Cost : connection.Time;
-
-                graph.AddEdge(origin.Id, destination.Id, weight);
+                var weight = unitOfMeasure == UnitOfMeasure.Cost ? connections[index].Cost : connections[index].Time;
+                graph.AddEdge(connections[index].Origin.Id, connections[index].Destination.Id, weight);
             }
 
             return graph;

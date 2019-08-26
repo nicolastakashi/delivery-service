@@ -1,16 +1,13 @@
 ﻿using DeliveryService.Domain.Commands;
+using DeliveryService.Domain.Entities;
 using MongoDB.Bson;
 using System;
 
 namespace DeliveryService.Domain.ValueObject
 {
-    public class Point : BaseValueObject<Point>
+    public class Point : BaseEntity
     {
         public string Name { get; protected set; }
-        public ObjectId Id { get; protected set; }
-        public bool Active { get; protected set; }
-        public DateTime CreatedAt { get; protected set; }
-        public DateTime UpdatedAt { get; protected set; }
 
         protected Point()
         {
@@ -40,14 +37,23 @@ namespace DeliveryService.Domain.ValueObject
             UpdatedAt = DateTime.UtcNow;
         }
 
-        protected override bool EqualsCore(Point other)
+        public override bool Equals(object obj)
+        {
+            var valueObj = obj as Point;
+
+            if (ReferenceEquals(valueObj, null)) return false;
+
+            return EqualsCore(valueObj);
+        }
+
+        private bool EqualsCore(Point other)
             => other.Id == Id
                 && other.Name == Name
                 && other.Active == Active
                 && other.CreatedAt == CreatedAt
                 && other.UpdatedAt == UpdatedAt;
 
-        protected override int GetHashCodeCore()
+        public override int GetHashCode()
         {
             unchecked
             {

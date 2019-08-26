@@ -1,10 +1,14 @@
 ﻿using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Queries;
+using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
+using DeliveryService.Infra.Api.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DeliveryService.Api.Controllers
@@ -23,6 +27,8 @@ namespace DeliveryService.Api.Controllers
         }
 
         [HttpPost, Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(BaseEnvelopeResponse<ObjectId>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Create([FromBody]CreateConnectionCommand command)
         {
             var result = await _bus.Send(command);
@@ -33,6 +39,8 @@ namespace DeliveryService.Api.Controllers
         }
 
         [HttpPut, Authorize(Roles = "Admin")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Update([FromBody] UpdatedConnectionCommand command)
         {
             var result = await _bus.Send(command);
@@ -43,6 +51,8 @@ namespace DeliveryService.Api.Controllers
         }
 
         [HttpDelete("{id}"), Authorize(Roles = "Admin")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Inactive([FromRoute] string id)
         {
             var result = await _bus.Send(InactiveConnectionCommand.Create(id));
@@ -53,6 +63,8 @@ namespace DeliveryService.Api.Controllers
         }
 
         [HttpGet("{id}"), Authorize]
+        [ProducesResponseType(typeof(BaseEnvelopeResponse<ConnectionQueryResult>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Find([FromRoute]string id)
         {
             var connection = await _connectionReadOnlyRepository.FindAsync(id);
@@ -61,6 +73,8 @@ namespace DeliveryService.Api.Controllers
         }
 
         [HttpGet, Authorize]
+        [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<ConnectionQueryResult>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
         {
             var connections = await _connectionReadOnlyRepository.GetAsync(resourceQuery);

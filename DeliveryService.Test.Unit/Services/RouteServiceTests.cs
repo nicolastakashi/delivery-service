@@ -8,14 +8,14 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace DeliveryService.Test.Unit
+namespace DeliveryService.Test.Unit.Services
 {
-    public class Class1
+    public class RouteServiceTests
     {
         private static List<Point> _points;
         private static List<Connection> _connections;
 
-        public Class1()
+        public RouteServiceTests()
         {
             _points = new List<Point>
             {

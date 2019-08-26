@@ -38,7 +38,7 @@ namespace DeliveryService.Test.Unit.Command
         {
             // Arrange
             _pointRepositoryMock
-                .Setup(m => m.PointAlreadyExistsAsync(It.IsAny<Point>()))
+                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Point>()))
                 .Returns(Task.FromResult(false));
 
             var command = new Faker<CreatePointCommand>()
@@ -58,7 +58,7 @@ namespace DeliveryService.Test.Unit.Command
         {
             // Arrange
             _pointRepositoryMock
-                .Setup(m => m.PointAlreadyExistsAsync(It.IsAny<Point>()))
+                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Point>()))
                 .Returns(Task.FromResult(true));
 
             var command = new Faker<CreatePointCommand>()
@@ -124,7 +124,7 @@ namespace DeliveryService.Test.Unit.Command
                 .Returns(Task.FromResult(_point));
 
             _pointRepositoryMock
-                .Setup(m => m.PointAlreadyExistsAsync(It.IsAny<Point>()))
+                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Point>()))
                 .Returns(Task.FromResult(false));
 
             var command = new Faker<UpdatePointCommand>()
@@ -171,7 +171,7 @@ namespace DeliveryService.Test.Unit.Command
                 .Returns(Task.FromResult(It.IsAny<Point>()));
 
             _pointRepositoryMock
-              .Setup(m => m.PointAlreadyExistsAsync(It.IsAny<Point>()))
+              .Setup(m => m.AlreadyExistsAsync(It.IsAny<Point>()))
               .Returns(Task.FromResult(true));
 
             var command = new Faker<UpdatePointCommand>()

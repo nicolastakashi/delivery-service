@@ -27,7 +27,7 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
             try
             {
                 return await _mongoContext.GetCollection<Connection>(MongoCollections.Connection)
-                    .Find(x => x.Id == ObjectId.Parse(id))
+                    .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
                     .Project(x => new ConnectionQueryResult
                     {
                         Id = x.Id,

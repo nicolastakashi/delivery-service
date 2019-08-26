@@ -1,10 +1,9 @@
 ﻿using DeliveryService.Domain.Entities;
-using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryService.Domain.Commands
 {
-    public class CreateRouteCommand : BaseCommand<DomainResult<ObjectId>>
+    public class UpdateRouteCommand : BaseCommand<DomainResult>
     {
         [Required(ErrorMessage = "Origin is required")]
         public string OriginPointId { get; set; }

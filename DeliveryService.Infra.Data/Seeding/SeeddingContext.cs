@@ -3,6 +3,7 @@ using DeliveryService.Domain.Enums;
 using DeliveryService.Domain.ValueObject;
 using DeliveryService.Infra.Data.Constants;
 using DeliveryService.Infra.Data.Context;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -16,15 +17,20 @@ namespace DeliveryService.Infra.Data.Seeding
 {
     public class SeeddingContext
     {
-        public static void Seed(IConfiguration configuration)
+        public static void Seed(IConfiguration configuration, IHostingEnvironment environment)
         {
             var context = new MongoContext(configuration);
 
             if (AlredySeeded(context)) return;
 
             CreateUsers(context);
-            CreatePoints(context);
-            CreateConnections(context);
+
+            if(environment.IsEnvironment("Testing") is false)
+            {
+                CreatePoints(context);
+                CreateConnections(context);
+            }
+            
             CreateSeedInfo(context);
         }
 

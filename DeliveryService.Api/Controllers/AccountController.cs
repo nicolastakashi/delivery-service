@@ -1,8 +1,10 @@
 ﻿using DeliveryService.Domain.Commands;
 using DeliveryService.Infra.Api.Controller;
+using DeliveryService.Infra.Api.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DeliveryService.Api.Controllers
@@ -19,6 +21,8 @@ namespace DeliveryService.Api.Controllers
         }
 
         [HttpPost, AllowAnonymous]
+        [ProducesResponseType(typeof(BaseEnvelopeResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> Login([FromBody]CreateUserSessionCommand command)
         {
             var result = await _bus.Send(command);

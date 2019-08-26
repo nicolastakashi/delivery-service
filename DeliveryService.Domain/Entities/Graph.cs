@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DeliveryService.Domain.Entities
 {
-    internal sealed class Graph
+    public sealed class Graph
     {
         private readonly Dictionary<ObjectId, List<Edge>> adjacency = new Dictionary<ObjectId, List<Edge>>();
 
@@ -33,23 +33,23 @@ namespace DeliveryService.Domain.Entities
 
         public Itinerary[] FindPath(ObjectId origin)
         {
-            var itineraries = adjacency.Select(i => new Itinerary { Distance = decimal.MaxValue, Previous = i.Key }).ToArray();
+            var itineraries = adjacency.Select(i => new Itinerary { PointId = i.Key, Distance = decimal.MaxValue, Previous = i.Key }).ToArray();
 
             itineraries.FirstOrDefault(x => x.Previous == origin).Distance = 0;
 
             var visited = new Dictionary<ObjectId, bool>();
 
-            var heap = new Heap<(ObjectId node, decimal distance)>((a, b) => a.distance.CompareTo(b.distance));
+            var heap = new Heap<(ObjectId node, decimal distance)>((origin, 0), (a, b) => a.distance.CompareTo(b.distance));
 
             heap.Push((origin, 0));
 
             while (heap.Count > 0)
             {
-                var current = heap.Pop();
+                var (node, distance) = heap.Pop();
 
-                if (visited.ContainsKey(current.node)) continue;
+                if (visited.ContainsKey(node)) continue;
 
-                var edges = adjacency[current.node];
+                var edges = adjacency[node];
 
                 foreach (var edge in edges)
                 {
@@ -57,32 +57,33 @@ namespace DeliveryService.Domain.Entities
 
                     if (visited.ContainsKey(point)) continue;
 
-                    var itinerary = itineraries.FirstOrDefault(x => x.Previous == current.node);
-                    var itineraryPoint = itineraries.FirstOrDefault(x => x.Previous == point);
+                    var itinerary = itineraries.FirstOrDefault(x => x.PointId == node);
+                    var itineraryPoint = itineraries.FirstOrDefault(x => x.PointId == point);
 
                     decimal calcDistance = itinerary.Distance + edge.Weight;
 
                     if (calcDistance < itineraryPoint.Distance)
                     {
-                        itineraryPoint.Previous = current.node;
+                        itineraryPoint.Previous = node;
                         itineraryPoint.Distance = calcDistance;
                         heap.Push((point, calcDistance));
                     }
                 }
 
-                visited[current.node] = true;
+                visited[node] = true;
             }
             return itineraries;
         }
     }
 
-    internal sealed class Itinerary
+    public sealed class Itinerary
     {
+        public ObjectId PointId { get; set; }
         public decimal Distance { get; set; }
         public ObjectId Previous { get; set; }
     }
 
-    internal sealed class Edge
+    public sealed class Edge
     {
         public ObjectId Node { get; private set; }
         public decimal Weight { get; private set; }
@@ -98,15 +99,10 @@ namespace DeliveryService.Domain.Entities
         }
     }
 
-    internal sealed class EdgeList
-    {
-        public Dictionary<ObjectId, List<Edge>> Edges { get; set; }
-    }
-
-    internal sealed class Heap<T>
+    public sealed class Heap<T>
     {
         private readonly IComparer<T> comparer;
-        private readonly List<T> list = new List<T> { default };
+        private readonly List<T> list = new List<T>();
 
         public Heap() : this(default(IComparer<T>)) { }
 
@@ -115,7 +111,7 @@ namespace DeliveryService.Domain.Entities
             this.comparer = comparer ?? Comparer<T>.Default;
         }
 
-        public Heap(Comparison<T> comparison) : this(Comparer<T>.Create(comparison)) { }
+        public Heap(T element, Comparison<T> comparison) : this(Comparer<T>.Create(comparison)) { this.Push(element); }
 
         public int Count => list.Count - 1;
 

@@ -1,5 +1,5 @@
-﻿using DeliveryService.Domain.Repositories.Write;
-using DeliveryService.Domain.ValueObject;
+﻿using DeliveryService.Domain.Entities;
+using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Infra.CustomExceptions;
 using DeliveryService.Infra.Data.Constants;
 using DeliveryService.Infra.Data.Context;
@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Infra.Data.Repositories.Write
 {
-    public class PointRepository : BaseRepository<Point>, IPointRepository
+    public class RouteRepository : BaseRepository<Route>, IRouteRepository
     {
-        public PointRepository(IMongoContext context)
-            : base(context, MongoCollections.Point)
+        public RouteRepository(IMongoContext mongoContext) 
+            : base(mongoContext, MongoCollections.Route)
         {
         }
 
-        public override async Task<bool> AlreadyExistsAsync(Point point)
+        public override async Task<bool> AlreadyExistsAsync(Route route)
         {
             try
             {
-                return await Context.GetCollection<Point>(Collection)
-                    .Find(x => x.Name == point.Name && x.Active)
+                return await Context.GetCollection<Route>(Collection)
+                    .Find(x => x.Origin.Equals(route.Origin) && x.Destination.Equals(route.Destination) && x.Active)
                     .AnyAsync();
             }
             catch (Exception ex)

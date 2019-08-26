@@ -3,12 +3,7 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Domain.Repositories.Write
 {
-    public interface IPointRepository
+    public interface IPointRepository : IBaseRepository<Point>
     {
-        Task CreateAsync(Point point);
-        Task<Point> FindAsync(string id);
-        Task<bool> PointAlreadyExistsAsync(Point point);
-        Task UpdateAsync(Point point);
-        Task InactivePointAsync(Point point);
     }
 }

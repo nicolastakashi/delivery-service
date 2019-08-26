@@ -1,8 +1,6 @@
-﻿using DeliveryService.Domain.Enums;
-using DeliveryService.Domain.ValueObject;
+﻿using DeliveryService.Domain.ValueObject;
 using MongoDB.Bson;
 using System;
-using System.Collections.Generic;
 
 namespace DeliveryService.Domain.Entities
 {
@@ -11,9 +9,6 @@ namespace DeliveryService.Domain.Entities
         public string Name { get; protected set; }
         public Point Origin { get; protected set; }
         public Point Destination { get; protected set; }
-        public decimal Weight { get; protected set; }
-        public UnitOfMeasure UnitOfMeasure { get; protected set; }
-        public IList<Point> WayPoints { get; protected set; }
 
         protected Route()
         {
@@ -32,6 +27,13 @@ namespace DeliveryService.Domain.Entities
 
         public static Route Create(Point origin, Point destination)
             => new Route(origin, destination);
+
+        public void Update(Point origin, Point destination)
+        {
+            Origin = origin;
+            Destination = destination;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
         private string BuildName()
             => $"From {Origin.Name} To {Destination.Name}";
