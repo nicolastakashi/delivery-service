@@ -65,5 +65,8 @@ namespace DeliveryService.Domain.ValueObject
                 return hashCode;
             }
         }
+
+        internal bool IsTheSame(Point point)
+            => point.Name == Name && point.Active;
     }
 }

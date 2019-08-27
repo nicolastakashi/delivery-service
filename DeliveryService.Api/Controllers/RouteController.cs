@@ -1,4 +1,6 @@
 ﻿using DeliveryService.Domain.Commands;
+using DeliveryService.Domain.Queries;
+using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
 using DeliveryService.Infra.Api.Response;
@@ -59,6 +61,16 @@ namespace DeliveryService.Api.Controllers
             return result.Success
                 ? NoContent()
                 : Error(result.ErrorMessage);
+        }
+
+        [HttpGet, Authorize]
+        [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<RoutesQueryResult>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Get([FromQuery]GetPagedResourceQuery resourceQuery)
+        {
+            var routes = await _routeReadOnlyRepository.GetAsync(resourceQuery);
+
+            return Success(routes);
         }
     }
 }

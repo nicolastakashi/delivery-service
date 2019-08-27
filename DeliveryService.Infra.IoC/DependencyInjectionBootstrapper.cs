@@ -40,6 +40,8 @@ namespace DeliveryService.Infra.IoC
             services.AddScoped<IConnectionRepository, ConnectionRepository>();
             services.AddScoped<IConnectionReadOnlyRepository, ConnectionReadOnlyRepository>();
             services.AddScoped<IRouteReadOnlyRepository, RouteReadOnlyRepository>();
+            services.AddScoped<IRouteRepository, RouteRepository>();
+            
         }
     }
 }

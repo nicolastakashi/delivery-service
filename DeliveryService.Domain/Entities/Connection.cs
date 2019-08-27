@@ -38,5 +38,8 @@ namespace DeliveryService.Domain.Entities
 
         internal bool ArePointsChanged(Point origin, Point destination)
             => Origin.Equals(origin) is false || Destination.Equals(destination) is false;
+
+        internal bool IsTheSame(Connection connection) 
+            => connection.Origin.Equals(Origin) && connection.Destination.Equals(Destination) && connection.Active;
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryService.Domain.Commands
 {
-    public sealed class CreateConnectionCommand : BaseCommand<DomainResult<ObjectId>>
+    public class CreateConnectionCommand : BaseCommand<DomainResult<ObjectId>>
     {
         [Required(ErrorMessage = "Origin is required")]
         public string OriginPointId { get; set; }

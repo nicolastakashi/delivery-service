@@ -42,5 +42,8 @@ namespace DeliveryService.Domain.Entities
         {
             return Origin.Equals(origin) is false || Destination.Equals(destination) is false;
         }
+
+        internal bool IsTheSame(Route route) 
+            => route.Origin.Equals(Origin) && route.Destination.Equals(Destination) && route.Active;
     }
 }

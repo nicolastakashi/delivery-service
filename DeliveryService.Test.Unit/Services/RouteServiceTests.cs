@@ -34,7 +34,7 @@ namespace DeliveryService.Test.Unit.Services
             {
                 new Connection(_points.FirstOrDefault(x => x.Name == "A"), _points.FirstOrDefault(x => x.Name == "C"), 1, 20),
                 new Connection(_points.FirstOrDefault(x => x.Name == "C"), _points.FirstOrDefault(x => x.Name == "B"), 1, 12),
-                new Connection(_points.FirstOrDefault(x => x.Name == "A"), _points.FirstOrDefault(x => x.Name == "E"), 30, 5),
+                new Connection(_points.FirstOrDefault(x => x.Name == "A"), _points.FirstOrDefault(x => x.Name == "E"), 30, 1),
                 new Connection(_points.FirstOrDefault(x => x.Name == "A"), _points.FirstOrDefault(x => x.Name == "H"), 10, 1),
                 new Connection(_points.FirstOrDefault(x => x.Name == "H"), _points.FirstOrDefault(x => x.Name == "E"), 30, 1),
                 new Connection(_points.FirstOrDefault(x => x.Name == "E"), _points.FirstOrDefault(x => x.Name == "D"), 3, 5),
@@ -58,7 +58,7 @@ namespace DeliveryService.Test.Unit.Services
             var routeService = new RouteService(UnitOfMeasure.Cost, _connections.ToArray(), _points.ToArray());
 
             var origin = _points.FirstOrDefault(x => x.Name == "A");
-            var destination = _points.FirstOrDefault(x => x.Name == "B");
+            var destination = _points.FirstOrDefault(x => x.Name == "E");
 
             routeService.FindBestPath(origin, destination);
         }

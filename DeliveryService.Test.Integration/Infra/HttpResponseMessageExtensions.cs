@@ -11,5 +11,11 @@ namespace DeliveryService.Test.Integration.Infra
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<Response<TResult>>(content);
         }
+
+        public static async Task<Response<object>> ReadAsResponseAsync(this HttpResponseMessage httpResponseMessage)
+        {
+            var content = await httpResponseMessage.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<Response<object>>(content);
+        }
     }
 }

@@ -24,13 +24,17 @@ namespace DeliveryService.Infra.Data.Seeding
             if (AlredySeeded(context)) return;
 
             CreateUsers(context);
+            CreatePoints(context);
 
-            if(environment.IsEnvironment("Testing") is false)
+            if (environment.IsEnvironment("Testing"))
             {
-                CreatePoints(context);
+                CreateTestConnections(context);
+            }
+            else
+            {
                 CreateConnections(context);
             }
-            
+
             CreateSeedInfo(context);
         }
 
@@ -62,44 +66,38 @@ namespace DeliveryService.Infra.Data.Seeding
 
         public static void CreateConnections(MongoContext context)
         {
-            //var points = BuildPoints();
+            var connections = new List<Connection>
+            {
+                CreateConnection("A", "C",1,20, "5d651266d6fb92d4e881694d"),
+                CreateConnection("C", "B", 1,12,"5d65126ac6676c19fdf9d4c9"),
+                CreateConnection("A", "E", 30,5,"5d65127055f62a64608c55a8"),
+                CreateConnection("A", "H", 10,1,"5d6512732127ca5f44d62e63"),
+                CreateConnection("H", "E", 30,1,"5d65127971a59f5dab47ed5b"),
+                CreateConnection("E", "D", 3,5,"5d6512815b90904408c9a1b3"),
+                CreateConnection("D", "F", 4,50,"5d6512850c8409a79e6d1b67"),
+                CreateConnection("F", "G", 40,50,"5d65128b557c5f569ec05db4"),
+                CreateConnection("G", "B", 64,73,"5d65129210148331c637c83a"),
+                CreateConnection("F", "I", 45,50,"5d6512972934f26dfa188159"),
+                CreateConnection("I", "B", 65,5,"5d65129ed4ef53e206b384ae"),
+            };
 
-            //var connections = new List<Connection>
-            //{
-            //    new Connection(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "C"),1,20),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "C"), points.FirstOrDefault(x => x.Name == "B"), 1,12),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "E"), 30,5),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "H"), 10,1),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "H"), points.FirstOrDefault(x => x.Name == "E"), 30,1),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "E"), points.FirstOrDefault(x => x.Name == "D"), 3,5),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "D"), points.FirstOrDefault(x => x.Name == "F"), 4,50),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "G"), 40,50),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "G"), points.FirstOrDefault(x => x.Name == "B"), 64,73),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "I"), 45,50),
-            //    new Connection(points.FirstOrDefault(x => x.Name == "I"), points.FirstOrDefault(x => x.Name == "B"), 65,5),
-            //};
+            context.GetCollection<Connection>(MongoCollections.Connection).InsertMany(connections);
+        }
 
-            //context.GetCollection<Connection>(MongoCollections.Connection).InsertMany(connections);
+        public static void CreateTestConnections(MongoContext context)
+        {
+            var connections = new List<Connection>
+            {
+                CreateConnection("A", "C",1,20, "5d651266d6fb92d4e881694d"),
+                CreateConnection("C", "B", 1,12,"5d65126ac6676c19fdf9d4c9"),
+            };
 
+            context.GetCollection<Connection>(MongoCollections.Connection).InsertMany(connections);
         }
 
         public static void CreateRoutes(MongoContext context)
         {
             var points = BuildPoints();
-            //var routes = new List<Route>
-            //{
-            //    new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "C"),1,20),
-            //    new Route(points.FirstOrDefault(x => x.Name == "C"), points.FirstOrDefault(x => x.Name == "B"), 1,12),
-            //    new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "E"), 30,5),
-            //    new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "H"), 10,1),
-            //    new Route(points.FirstOrDefault(x => x.Name == "H"), points.FirstOrDefault(x => x.Name == "E"), 30,1),
-            //    new Route(points.FirstOrDefault(x => x.Name == "E"), points.FirstOrDefault(x => x.Name == "D"), 3,5),
-            //    new Route(points.FirstOrDefault(x => x.Name == "D"), points.FirstOrDefault(x => x.Name == "F"), 4,50),
-            //    new Route(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "G"), 40,50),
-            //    new Route(points.FirstOrDefault(x => x.Name == "G"), points.FirstOrDefault(x => x.Name == "B"), 64,73),
-            //    new Route(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "I"), 45,50),
-            //    new Route(points.FirstOrDefault(x => x.Name == "I"), points.FirstOrDefault(x => x.Name == "B"), 65,5),
-            //};
 
             var routes = new List<Route>
             {
@@ -148,15 +146,34 @@ namespace DeliveryService.Infra.Data.Seeding
         private static List<Point> BuildPoints()
             => new List<Point>
             {
-                new Point("A"),
-                new Point("B"),
-                new Point("C"),
-                new Point("D"),
-                new Point("E"),
-                new Point("F"),
-                new Point("G"),
-                new Point("H"),
-                new Point("I")
+                BuildPoint("A","5d650c106692258d95b7b79b"),
+                BuildPoint("B","5d650c13198287101b671d11"),
+                BuildPoint("C","5d650c185d294a661f69be1a"),
+                BuildPoint("D","5d650c1df7af41a98b331435"),
+                BuildPoint("E","5d650c211ea6e3f067031715"),
+                BuildPoint("F","5d650c258e15ae52add29316"),
+                BuildPoint("G","5d650c29d20f689a5bfb4f89"),
+                BuildPoint("H","5d650c2e51806b9679d33d51"),
+                BuildPoint("I","5d650c33e5802083f08c631d")
             };
+
+        private static Point BuildPoint(string name, string id)
+        {
+            var point = new Point(name)
+            {
+                Id = ObjectId.Parse(id)
+            };
+            return point;
+        }
+
+        private static Connection CreateConnection(string origin, string destination, decimal time, decimal cost, string id)
+        {
+            var points = BuildPoints();
+
+            return new Connection(points.FirstOrDefault(x => x.Name == origin), points.FirstOrDefault(x => x.Name == destination), time, cost)
+            {
+                Id = ObjectId.Parse(id)
+            };
+        }
     }
 }

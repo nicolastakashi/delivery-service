@@ -11,14 +11,13 @@ using Xunit;
 namespace DeliveryService.Test.Integration.Controllers
 {
     [Collection("DeliveryServiceTests")]
-    public class AccountControllerTests
+    public class AccountControllerTests : BaseControllerTests
     {
-        private readonly HttpClient _client;
         private readonly string _resource = "/api/accounts";
 
         public AccountControllerTests(ServiceContainersFixture fixture)
+            : base(fixture)
         {
-            _client = fixture.GetClient();
         }
 
         [Fact]
@@ -29,7 +28,7 @@ namespace DeliveryService.Test.Integration.Controllers
 
             //Act
             using (var body = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
-            using (var result = await _client.PostAsync(_resource, body))
+            using (var result = await Client.PostAsync(_resource, body))
             {
                 var response = await result.ReadAsResponseAsync<string>();
 
@@ -50,7 +49,7 @@ namespace DeliveryService.Test.Integration.Controllers
 
             //Act
             using (var body = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
-            using (var result = await _client.PostAsync(_resource, body))
+            using (var result = await Client.PostAsync(_resource, body))
             {
                 var response = await result.ReadAsResponseAsync<string>();
 

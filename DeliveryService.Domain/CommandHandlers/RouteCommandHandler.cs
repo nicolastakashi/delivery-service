@@ -25,19 +25,17 @@ namespace DeliveryService.Domain.CommandHandlers
 
         public async Task<DomainResult<ObjectId>> Handle(CreateRouteCommand command, CancellationToken cancellationToken)
         {
-            var origin = _pointRepository.FindAsync(command.OriginPointId);
-            var destination = _pointRepository.FindAsync(command.DestinationPointId);
+            var origin = await _pointRepository.FindAsync(command.OriginPointId);
+            var destination = await _pointRepository.FindAsync(command.DestinationPointId);
 
-            await Task.WhenAll(origin, destination);
-
-            if (origin.Result is null || destination.Result is null)
+            if (origin is null || destination is null)
             {
                 return DomainResult.Failure<ObjectId>("Origin or Destination not found");
             }
 
-            var route = Route.Create(origin.Result, destination.Result);
+            var route = Route.Create(origin, destination);
 
-            if (await _routeRepository.AlreadyExistsAsync(x => x.Origin.Equals(route.Origin) && x.Destination.Equals(route.Destination) && x.Active))
+            if (await _routeRepository.AlreadyExistsAsync(x => route.IsTheSame(x)))
             {
                 return DomainResult.Failure<ObjectId>("Route already exists", HttpStatusCode.Conflict);
             }
@@ -49,12 +47,10 @@ namespace DeliveryService.Domain.CommandHandlers
 
         public async Task<DomainResult> Handle(UpdateRouteCommand command, CancellationToken cancellationToken)
         {
-            var origin = _pointRepository.FindAsync(command.OriginPointId);
-            var destination = _pointRepository.FindAsync(command.DestinationPointId);
+            var origin = await _pointRepository.FindAsync(command.OriginPointId);
+            var destination = await _pointRepository.FindAsync(command.DestinationPointId);
 
-            await Task.WhenAll(origin, destination);
-
-            if (origin.Result is null || destination.Result is null)
+            if (origin is null || destination is null)
             {
                 return DomainResult.Failure<string>("Origin or Destination not found");
             }
@@ -66,11 +62,11 @@ namespace DeliveryService.Domain.CommandHandlers
                 return DomainResult.Failure<string>("Route not found");
             }
 
-            var arePointsChanged = route.ArePointsChanged(origin.Result, destination.Result);
+            var arePointsChanged = route.ArePointsChanged(origin, destination);
 
-            route.Update(origin.Result, destination.Result);
+            route.Update(origin, destination);
 
-            if(arePointsChanged && await _routeRepository.AlreadyExistsAsync(x => x.Origin.Equals(route.Origin) && x.Destination.Equals(route.Destination) && x.Active))
+            if(arePointsChanged && await _routeRepository.AlreadyExistsAsync(x => route.IsTheSame(x)))
             {
                 return DomainResult.Failure<string>("Route already exists", HttpStatusCode.Conflict);
             }
