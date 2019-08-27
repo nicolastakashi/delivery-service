@@ -29,7 +29,7 @@ namespace DeliveryService.Test.Unit.Entities
         [Fact]
         public void Graph_WithPoints_SetupSuccess()
         {
-            var graph = new Graph(_points.ToArray());
+            var graph = new Dijkstra (_points.ToArray());
 
             graph.Count.Should().Be(_points.Count);
         }
