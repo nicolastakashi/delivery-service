@@ -28,8 +28,8 @@ namespace DeliveryService.Test.Integration.Controllers
         public async void Post_Connections_Success()
         {
             var command = new Faker<CreateRouteCommand>()
-                .RuleFor(p => p.OriginPointId, "5d650c106692258d95b7b79b")
-                .RuleFor(p => p.DestinationPointId, "5d650c2e51806b9679d33d51")
+                .RuleFor(p => p.OriginPointId, "5d6441a042a56c173573234a")
+                .RuleFor(p => p.DestinationPointId, "5d6441ecdab0be906c200a72")
                 .Generate();
 
             using (var content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))
@@ -46,12 +46,12 @@ namespace DeliveryService.Test.Integration.Controllers
         [Fact, Order(2)]
         public async void Get_Route_Success()
         {
-            //var result = await Client.GetAsync($"{_resource}/{_id}");
+            var result = await Client.GetAsync($"{_resource}/{_id}");
 
-            //var response = await result.ReadAsResponseAsync();
+            var response = await result.ReadAsResponseAsync();
 
-            //result.StatusCode.Should().Be(HttpStatusCode.OK);
-            //response.Result.Should().NotBeNull();
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Result.Should().NotBeNull();
         }
 
 
@@ -70,8 +70,8 @@ namespace DeliveryService.Test.Integration.Controllers
         {
             var command = new Faker<UpdateRouteCommand>()
                 .RuleFor(p => p.Id, _id)
-                .RuleFor(p => p.OriginPointId, "5d650c106692258d95b7b79b")
-                .RuleFor(p => p.DestinationPointId, "5d650c2e51806b9679d33d51")
+                .RuleFor(p => p.OriginPointId, "5d6441a042a56c173573234a")
+                .RuleFor(p => p.DestinationPointId, "5d6441bb5dbb299a46c616dd")
                 .Generate();
 
             using (var content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))

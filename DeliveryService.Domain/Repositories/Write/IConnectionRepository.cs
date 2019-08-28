@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Domain.Repositories.Write
 {
-    public interface IConnectionRepository : IBaseRepository<Connection>
+    public interface IConnectionRepository : IBaseRepository<Connection>, ICacheRepository
     {
+        Task<Connection[]> GetAllActiveConnections();
     }
 }

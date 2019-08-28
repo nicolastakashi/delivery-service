@@ -4,6 +4,7 @@ using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
 using DeliveryService.Infra.Api.Response;
+using DeliveryService.Infra.Data.Context;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace DeliveryService.Api.Controllers
         private readonly IMediator _bus;
         private readonly IConnectionReadOnlyRepository _connectionReadOnlyRepository;
 
-        public ConnectionController(IMediator bus, IConnectionReadOnlyRepository connectionReadOnlyRepository)
+        public ConnectionController(IMediator bus, IConnectionReadOnlyRepository connectionReadOnlyRepository, IRedisContext redisContext)
         {
             _bus = bus;
             _connectionReadOnlyRepository = connectionReadOnlyRepository;
@@ -77,9 +78,9 @@ namespace DeliveryService.Api.Controllers
         [HttpGet, Authorize]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<ConnectionQueryResult>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
+        public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resource)
         {
-            var connections = await _connectionReadOnlyRepository.GetAsync(resourceQuery);
+            var connections = await _connectionReadOnlyRepository.GetAsync(resource);
 
             return Success(connections);
         }

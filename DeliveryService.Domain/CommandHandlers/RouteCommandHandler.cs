@@ -1,6 +1,8 @@
 ﻿using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
+using DeliveryService.Domain.Service;
+using DeliveryService.Domain.ValueObject;
 using MediatR;
 using MongoDB.Bson;
 using System.Net;
@@ -12,15 +14,18 @@ namespace DeliveryService.Domain.CommandHandlers
     public class RouteCommandHandler :
         IRequestHandler<CreateRouteCommand, DomainResult<ObjectId>>,
         IRequestHandler<UpdateRouteCommand, DomainResult>,
-        IRequestHandler<InactiveRouteCommand, DomainResult>
+        IRequestHandler<InactiveRouteCommand, DomainResult>,
+        IRequestHandler<FindTheBestRoutePathCommand, DomainResult<BestRoutePath>>
     {
         private readonly IPointRepository _pointRepository;
         private readonly IRouteRepository _routeRepository;
+        private readonly IConnectionRepository _connectionRepository;
 
-        public RouteCommandHandler(IPointRepository pointRepository, IRouteRepository routeRepository)
+        public RouteCommandHandler(IPointRepository pointRepository, IRouteRepository routeRepository, IConnectionRepository connectionRepository)
         {
             _pointRepository = pointRepository;
             _routeRepository = routeRepository;
+            _connectionRepository = connectionRepository;
         }
 
         public async Task<DomainResult<ObjectId>> Handle(CreateRouteCommand command, CancellationToken cancellationToken)
@@ -90,6 +95,21 @@ namespace DeliveryService.Domain.CommandHandlers
             await _routeRepository.UpdateAsync(route);
 
             return DomainResult.Ok();
+        }
+
+        public async Task<DomainResult<BestRoutePath>> Handle(FindTheBestRoutePathCommand command, CancellationToken cancellationToken)
+        {
+            var route = await _routeRepository.FindAsync(command.RouteId);
+
+            if(route is null)
+            {
+                return DomainResult.Failure<BestRoutePath>("Route was not found");
+            }
+
+            var points = await _pointRepository.GetAllActivePoints();
+            var connections = await _connectionRepository.GetAllActiveConnections();
+
+            return new RouteService(command.UnitOfMeasure, connections, points).FindBestPath(route);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Entities;
+using DeliveryService.Domain.Events;
 using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Domain.ValueObject;
 using MediatR;
@@ -16,10 +17,12 @@ namespace DeliveryService.Domain.CommandHandlers
         IRequestHandler<UpdatePointCommand, DomainResult>
     {
         private readonly IPointRepository _pointRepository;
+        private readonly IMediator _mediator;
 
-        public PointCommandHandler(IPointRepository pointRepository)
+        public PointCommandHandler(IPointRepository pointRepository, IMediator mediator)
         {
             _pointRepository = pointRepository;
+            _mediator = mediator;
         }
 
         public async Task<DomainResult> Handle(InactivePointCommand command, CancellationToken cancellationToken)
@@ -34,6 +37,8 @@ namespace DeliveryService.Domain.CommandHandlers
             point.Inactive();
 
             await _pointRepository.UpdateAsync(point);
+
+            await _mediator.Publish(new PointInactivatedEvent(point));
 
             return DomainResult.Ok();
         }
@@ -50,6 +55,8 @@ namespace DeliveryService.Domain.CommandHandlers
             }
 
             await _pointRepository.CreateAsync(point);
+
+            await _mediator.Publish(new PointCreatedEvent(point));
 
             return DomainResult.Ok(point.Id);
         }
@@ -73,6 +80,8 @@ namespace DeliveryService.Domain.CommandHandlers
             }
 
             await _pointRepository.UpdateAsync(point);
+
+            await _mediator.Publish(new PointUpdatedEvent(point));
 
             return DomainResult.Ok();
         }

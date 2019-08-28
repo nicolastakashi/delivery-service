@@ -14,11 +14,12 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Infra.Data.Repositories.ReadOnly
 {
-    public class PointReadOnlyRepository : IPointReadOnlyRepository
+    public class PointReadOnlyRepository : BaseReadOnlyRepository, IPointReadOnlyRepository
     {
         private readonly IMongoContext _mongoContext;
 
-        public PointReadOnlyRepository(IMongoContext mongoContext)
+        public PointReadOnlyRepository(IMongoContext mongoContext, IRedisContext redisContext)
+            : base(redisContext)
         {
             _mongoContext = mongoContext;
         }
@@ -27,10 +28,15 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
         {
             try
             {
-                return await _mongoContext.GetCollection<Point>(MongoCollections.Point)
-                    .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
-                    .Project(x => new PointQueryResult { Name = x.Name, Id = x.Id })
-                    .FirstOrDefaultAsync();
+                async Task<PointQueryResult> SearchInDataBaseAsync()
+                {
+                    return await _mongoContext.GetCollection<Point>(MongoCollections.Point)
+                        .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
+                        .Project(x => new PointQueryResult { Name = x.Name, Id = x.Id })
+                        .FirstOrDefaultAsync();
+                }
+
+                return await GetFromCacheIfExist($"{CacheKeys.Points}:{id}", SearchInDataBaseAsync);
             }
             catch (Exception ex)
             {
@@ -42,15 +48,20 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
         {
             try
             {
-                var result = await _mongoContext.GetCollection<Point>(MongoCollections.Point)
-                    .AsQueryable()
-                    .Where(p => p.Active)
-                    .Search(p => p.Name.ToLower().Contains(resource.Search.ToLower()), resource.Search)
-                    .OrderByDescending(p => p.CreatedAt)
-                    .Select(p => new PointQueryResult { Id = p.Id, Name = p.Name })
-                    .GetPagedAsync(resource);
+                async Task<PagedQueryResult<PointQueryResult>> SearchInDataBaseAsync()
+                {
+                    var result = await _mongoContext.GetCollection<Point>(MongoCollections.Point)
+                        .AsQueryable()
+                        .Where(p => p.Active)
+                        .Search(p => p.Name.ToLower().Contains(resource.Search.ToLower()), resource.Search)
+                        .OrderByDescending(p => p.CreatedAt)
+                        .Select(p => new PointQueryResult { Id = p.Id, Name = p.Name })
+                        .GetPagedAsync(resource);
 
-                return result;
+                    return result;
+                }
+
+                return await GetFromCacheIfExist(resource.ToCacheKey(CacheKeys.Routes), SearchInDataBaseAsync);
             }
             catch (Exception ex)
             {

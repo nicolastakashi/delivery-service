@@ -12,3 +12,6 @@ services:
   mongo:
     ports:
       - "27018:27017"
+  redis:
+    ports:
+      - "6380:6379"

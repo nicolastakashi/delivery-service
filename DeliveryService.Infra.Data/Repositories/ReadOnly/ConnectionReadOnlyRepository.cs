@@ -14,11 +14,12 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Infra.Data.Repositories.ReadOnly
 {
-    public class ConnectionReadOnlyRepository : IConnectionReadOnlyRepository
+    public class ConnectionReadOnlyRepository : BaseReadOnlyRepository, IConnectionReadOnlyRepository
     {
         private readonly IMongoContext _mongoContext;
 
-        public ConnectionReadOnlyRepository(IMongoContext mongoContext)
+        public ConnectionReadOnlyRepository(IMongoContext mongoContext, IRedisContext redisContext)
+            : base(redisContext)
         {
             _mongoContext = mongoContext;
         }
@@ -27,24 +28,28 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
         {
             try
             {
-                return await _mongoContext.GetCollection<Connection>(MongoCollections.Connection)
-                    .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
-                    .Project(x => new ConnectionQueryResult
-                    {
-                        Id = x.Id,
-                        Cost = x.Cost,
-                        Time = x.Time,
-                        Origin = new PointQueryResult
+                async Task<ConnectionQueryResult> SearchInDataBaseAsync()
+                {
+                    return await _mongoContext.GetCollection<Connection>(MongoCollections.Connection)
+                        .Find(x => x.Id == ObjectId.Parse(id) && x.Active)
+                        .Project(x => new ConnectionQueryResult
                         {
-                            Id = x.Origin.Id,
-                            Name = x.Origin.Name
-                        },
-                        Destination = new PointQueryResult
-                        {
-                            Id = x.Destination.Id,
-                            Name = x.Destination.Name
-                        }
-                    }).FirstOrDefaultAsync();
+                            Id = x.Id,
+                            Cost = x.Cost,
+                            Time = x.Time,
+                            Origin = new PointQueryResult
+                            {
+                                Id = x.Origin.Id,
+                                Name = x.Origin.Name
+                            },
+                            Destination = new PointQueryResult
+                            {
+                                Id = x.Destination.Id,
+                                Name = x.Destination.Name
+                            }
+                        }).FirstOrDefaultAsync();
+                }
+                return await GetFromCacheIfExist($"{CacheKeys.Routes}:{id}", SearchInDataBaseAsync);
             }
             catch (Exception ex)
             {
@@ -56,29 +61,34 @@ namespace DeliveryService.Infra.Data.Repositories.ReadOnly
         {
             try
             {
-                var search = resource.Search.ToLower();
+                async Task<PagedQueryResult<ConnectionQueryResult>> SearchInDataBaseAsync()
+                {
+                    var search = resource.Search.ToLower();
 
-                return await _mongoContext.GetCollection<Connection>(MongoCollections.Connection)
-                    .AsQueryable()
-                    .Where(x => x.Active)
-                    .Search(x => x.Origin.Name.ToLower().Contains(search) || x.Destination.Name.ToLower().Contains(search), search)
-                    .OrderByDescending(p => p.CreatedAt)
-                    .Select(x => new ConnectionQueryResult
-                    {
-                        Id = x.Id,
-                        Cost = x.Cost,
-                        Time = x.Time,
-                        Origin = new PointQueryResult
+                    return await _mongoContext.GetCollection<Connection>(MongoCollections.Connection)
+                        .AsQueryable()
+                        .Where(x => x.Active)
+                        .Search(x => x.Origin.Name.ToLower().Contains(search) || x.Destination.Name.ToLower().Contains(search), search)
+                        .OrderByDescending(p => p.CreatedAt)
+                        .Select(x => new ConnectionQueryResult
                         {
-                            Id = x.Origin.Id,
-                            Name = x.Origin.Name
-                        },
-                        Destination = new PointQueryResult
-                        {
-                            Id = x.Destination.Id,
-                            Name = x.Destination.Name
-                        }
-                    }).GetPagedAsync(resource);
+                            Id = x.Id,
+                            Cost = x.Cost,
+                            Time = x.Time,
+                            Origin = new PointQueryResult
+                            {
+                                Id = x.Origin.Id,
+                                Name = x.Origin.Name
+                            },
+                            Destination = new PointQueryResult
+                            {
+                                Id = x.Destination.Id,
+                                Name = x.Destination.Name
+                            }
+                        }).GetPagedAsync(resource);
+                }
+
+                return await GetFromCacheIfExist(resource.ToCacheKey(CacheKeys.Connections), SearchInDataBaseAsync);
             }
             catch (Exception ex)
             {

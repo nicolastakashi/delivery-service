@@ -17,6 +17,9 @@ services:
       - "27017:27017"
     volumes:
       - 'mongodata:/data/db'
+  redis:
+    ports:
+      - "6379:6379"
 
 volumes:
   mongodata:

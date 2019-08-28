@@ -33,6 +33,7 @@ namespace DeliveryService.Infra.Data.Seeding
             else
             {
                 CreateConnections(context);
+                CreateRoutes(context);
             }
 
             CreateSeedInfo(context);
@@ -101,17 +102,8 @@ namespace DeliveryService.Infra.Data.Seeding
 
             var routes = new List<Route>
             {
-                new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "C")),
-                new Route(points.FirstOrDefault(x => x.Name == "C"), points.FirstOrDefault(x => x.Name == "B")),
                 new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "E")),
-                new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "H")),
-                new Route(points.FirstOrDefault(x => x.Name == "H"), points.FirstOrDefault(x => x.Name == "E")),
-                new Route(points.FirstOrDefault(x => x.Name == "E"), points.FirstOrDefault(x => x.Name == "D")),
-                new Route(points.FirstOrDefault(x => x.Name == "D"), points.FirstOrDefault(x => x.Name == "F")),
-                new Route(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "G")),
-                new Route(points.FirstOrDefault(x => x.Name == "G"), points.FirstOrDefault(x => x.Name == "B")),
-                new Route(points.FirstOrDefault(x => x.Name == "F"), points.FirstOrDefault(x => x.Name == "I")),
-                new Route(points.FirstOrDefault(x => x.Name == "I"), points.FirstOrDefault(x => x.Name == "B")),
+                new Route(points.FirstOrDefault(x => x.Name == "A"), points.FirstOrDefault(x => x.Name == "B")),
             };
 
             context.GetCollection<Route>(MongoCollections.Route).InsertMany(routes);
@@ -146,15 +138,15 @@ namespace DeliveryService.Infra.Data.Seeding
         private static List<Point> BuildPoints()
             => new List<Point>
             {
-                BuildPoint("A","5d650c106692258d95b7b79b"),
-                BuildPoint("B","5d650c13198287101b671d11"),
-                BuildPoint("C","5d650c185d294a661f69be1a"),
-                BuildPoint("D","5d650c1df7af41a98b331435"),
-                BuildPoint("E","5d650c211ea6e3f067031715"),
-                BuildPoint("F","5d650c258e15ae52add29316"),
-                BuildPoint("G","5d650c29d20f689a5bfb4f89"),
-                BuildPoint("H","5d650c2e51806b9679d33d51"),
-                BuildPoint("I","5d650c33e5802083f08c631d")
+                BuildPoint("A","5d6441a042a56c173573234a"),
+                BuildPoint("B","5d6441aa55b37e484313f1ab"),
+                BuildPoint("C","5d6441b372cf4983e658d6fc"),
+                BuildPoint("D","5d6441bb5dbb299a46c616dd"),
+                BuildPoint("E","5d6441c7ca2ed7030a0f825e"),
+                BuildPoint("F","5d6441d0980b1eacc9dc6a2f"),
+                BuildPoint("G","5d6441d49f3fc53e1cff4180"),
+                BuildPoint("H","5d6441de3818b03b315f3a31"),
+                BuildPoint("I","5d6441ecdab0be906c200a72")
             };
 
         private static Point BuildPoint(string name, string id)

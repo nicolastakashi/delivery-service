@@ -2,7 +2,7 @@
 
 namespace DeliveryService.Domain.Repositories.Write
 {
-    public interface IRouteRepository : IBaseRepository<Route>
+    public interface IRouteRepository : IBaseRepository<Route>, ICacheRepository
     {
     }
 }

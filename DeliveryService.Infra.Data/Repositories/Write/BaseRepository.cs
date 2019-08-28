@@ -14,12 +14,15 @@ namespace DeliveryService.Infra.Data.Repositories.Write
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
         protected readonly IMongoContext Context;
-        protected readonly string Collection;
+        protected readonly IRedisContext RedisContext;
+        protected IMongoCollection<TEntity> Collection;
+        private readonly string _collection;
 
         public BaseRepository(IMongoContext mongoContext, string collection)
         {
             Context = mongoContext;
-            Collection = collection;
+            Collection = Context.GetCollection<TEntity>(collection);
+            _collection = collection;
         }
 
 
@@ -29,7 +32,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
             {
                 var result = await Task.Run(() =>
                 {
-                    return Context.GetCollection<TEntity>(Collection)
+                    return Context.GetCollection<TEntity>(_collection)
                                   .AsQueryable()
                                   .Where(expression.Compile())
                                   .Any();
@@ -47,7 +50,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
         {
             try
             {
-                await Context.GetCollection<TEntity>(Collection).InsertOneAsync(entity);
+                await Context.GetCollection<TEntity>(_collection).InsertOneAsync(entity);
             }
             catch (Exception ex)
             {
@@ -59,7 +62,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
         {
             try
             {
-                return await Context.GetCollection<TEntity>(Collection)
+                return await Context.GetCollection<TEntity>(_collection)
                     .Find(e => e.Id == ObjectId.Parse(id) && e.Active)
                     .FirstOrDefaultAsync();
             }
@@ -73,7 +76,7 @@ namespace DeliveryService.Infra.Data.Repositories.Write
         {
             try
             {
-                await Context.GetCollection<TEntity>(Collection)
+                await Context.GetCollection<TEntity>(_collection)
                     .FindOneAndReplaceAsync(x => x.Id == entity.Id, entity);
             }
             catch (Exception ex)

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Domain.Repositories.Readonly
 {
-    public interface IRouteReadOnlyRepository
+    public interface IRouteReadOnlyRepository : IBaseReadOnlyRepository
     {
         Task<PagedQueryResult<RoutesQueryResult>> GetAsync(GetPagedResourceQuery resource);
     }

@@ -4,6 +4,7 @@ using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Domain.ValueObject;
 using FluentAssertions;
+using MediatR;
 using MongoDB.Bson;
 using Moq;
 using System;
@@ -17,6 +18,7 @@ namespace DeliveryService.Test.Unit.Command
     public class PointCommandHandlerTests
     {
         private readonly Mock<IPointRepository> _pointRepositoryMock;
+        private readonly Mock<IMediator> _mediatorMock;
         private readonly Point _point;
         private readonly PointCommandHandler _handler;
 
@@ -30,8 +32,9 @@ namespace DeliveryService.Test.Unit.Command
                 .RuleFor(p => p.UpdatedAt, DateTime.UtcNow)
                 .Generate();
 
+            _mediatorMock = new Mock<IMediator>();
             _pointRepositoryMock = new Mock<IPointRepository>();
-            _handler = new PointCommandHandler(_pointRepositoryMock.Object);
+            _handler = new PointCommandHandler(_pointRepositoryMock.Object, _mediatorMock.Object);
         }
 
         [Fact]

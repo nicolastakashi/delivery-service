@@ -74,7 +74,7 @@ namespace DeliveryService.Test.Unit.Services
             var origin = _points.FirstOrDefault(x => x.Name == "D");
             var destination = _points.FirstOrDefault(x => x.Name == "E");
 
-            routeService.FindBestPath(origin, destination);
+            //routeService.FindBestPath(origin, destination);
         }
     }
 }

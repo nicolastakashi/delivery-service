@@ -28,8 +28,8 @@ namespace DeliveryService.Test.Integration.Controllers
         public async void Post_Connections_Success()
         {
             var command = new Faker<CreateConnectionCommand>()
-                .RuleFor(p => p.OriginPointId, "5d650c106692258d95b7b79b")
-                .RuleFor(p => p.DestinationPointId, "5d650c2e51806b9679d33d51")
+                .RuleFor(p => p.OriginPointId, "5d6441a042a56c173573234a")
+                .RuleFor(p => p.DestinationPointId, "5d6441de3818b03b315f3a31")
                 .RuleFor(p => p.Time, v => v.Random.Number(70))
                 .RuleFor(p => p.Cost, v => v.Random.Number(50))
                 .Generate();
@@ -72,8 +72,8 @@ namespace DeliveryService.Test.Integration.Controllers
         {
             var command = new Faker<UpdatedConnectionCommand>()
                 .RuleFor(p => p.Id, _id)
-                .RuleFor(p => p.OriginPointId, "5d650c2e51806b9679d33d51")
-                .RuleFor(p => p.DestinationPointId, "5d650c211ea6e3f067031715")
+                .RuleFor(p => p.OriginPointId, "5d6441a042a56c173573234a")
+                .RuleFor(p => p.DestinationPointId, "5d6441c7ca2ed7030a0f825e")
                 .RuleFor(p => p.Time, v => v.Random.Number(70))
                 .RuleFor(p => p.Cost, v => v.Random.Number(50))
                 .Generate();

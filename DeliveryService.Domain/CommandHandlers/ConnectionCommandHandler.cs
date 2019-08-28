@@ -1,5 +1,6 @@
 ﻿using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Entities;
+using DeliveryService.Domain.Events;
 using DeliveryService.Domain.Repositories.Write;
 using MediatR;
 using MongoDB.Bson;
@@ -14,13 +15,15 @@ namespace DeliveryService.Domain.CommandHandlers
         IRequestHandler<UpdatedConnectionCommand, DomainResult>,
         IRequestHandler<InactiveConnectionCommand, DomainResult>
     {
+        private readonly IMediator _mediator;
         private readonly IPointRepository _pointRepository;
         private readonly IConnectionRepository _connectionRepository;
 
-        public ConnectionCommandHandler(IPointRepository pointRepository, IConnectionRepository connectionRepository)
+        public ConnectionCommandHandler(IPointRepository pointRepository, IConnectionRepository connectionRepository, IMediator mediator)
         {
             _pointRepository = pointRepository;
             _connectionRepository = connectionRepository;
+            _mediator = mediator;
         }
 
         public async Task<DomainResult<ObjectId>> Handle(CreateConnectionCommand command, CancellationToken cancellationToken)
@@ -43,6 +46,8 @@ namespace DeliveryService.Domain.CommandHandlers
             }
 
             await _connectionRepository.CreateAsync(connection);
+
+            await _mediator.Publish(new ConnectionCreatedEvent(connection));
 
             return DomainResult.Ok(connection.Id);
         }
@@ -81,6 +86,8 @@ namespace DeliveryService.Domain.CommandHandlers
 
             await _connectionRepository.UpdateAsync(connection);
 
+            await _mediator.Publish(new ConnectionUpdatedEvent(connection));
+
             return DomainResult.Ok();
         }
 
@@ -96,6 +103,7 @@ namespace DeliveryService.Domain.CommandHandlers
             connection.Inactive();
 
             await _connectionRepository.UpdateAsync(connection);
+            await _mediator.Publish(new ConnectionInactivatedEvent(connection));
 
             return DomainResult.Ok();
         }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Domain.Repositories.Readonly
 {
-    public interface IPointReadOnlyRepository
+    public interface IPointReadOnlyRepository : IBaseReadOnlyRepository
     {
         Task<PagedQueryResult<PointQueryResult>> GetAsync(GetPagedResourceQuery quere);
         Task<PointQueryResult> FindAsync(string id);

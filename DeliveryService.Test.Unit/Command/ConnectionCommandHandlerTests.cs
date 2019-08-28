@@ -5,6 +5,7 @@ using DeliveryService.Domain.Entities;
 using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Domain.ValueObject;
 using FluentAssertions;
+using MediatR;
 using MongoDB.Bson;
 using Moq;
 using System;
@@ -19,6 +20,7 @@ namespace DeliveryService.Test.Unit.Command
     {
         private readonly Mock<IPointRepository> _pointRepositoryMock;
         private readonly Mock<IConnectionRepository> _connectionRepositoryMock;
+        private readonly Mock<IMediator> _mediatorMock;
         private readonly ConnectionCommandHandler _handler;
         private readonly Point _origin;
         private readonly Point _destination;
@@ -27,7 +29,8 @@ namespace DeliveryService.Test.Unit.Command
         {
             _pointRepositoryMock = new Mock<IPointRepository>();
             _connectionRepositoryMock = new Mock<IConnectionRepository>();
-            _handler = new ConnectionCommandHandler(_pointRepositoryMock.Object, _connectionRepositoryMock.Object);
+            _mediatorMock = new Mock<IMediator>();
+            _handler = new ConnectionCommandHandler(_pointRepositoryMock.Object, _connectionRepositoryMock.Object, _mediatorMock.Object);
 
             _origin = new Faker<Point>().CustomInstantiator(f => new Point("A")).Generate();
             _destination = new Faker<Point>().CustomInstantiator(f => new Point("C")).Generate();
@@ -108,7 +111,7 @@ namespace DeliveryService.Test.Unit.Command
 
         [Fact]
         public async void HandleWithUnexistedPoint_UpdatedConnectionCommandSuccess()
-        { 
+        {
             // Range
             var connection = new Faker<Connection>().CustomInstantiator(c => new Connection(_origin, _destination, c.Random.Number(), c.Random.Number())).Generate();
             var command = BuildUpdatedConnectionCommand();
@@ -135,7 +138,7 @@ namespace DeliveryService.Test.Unit.Command
         private void SetupAlreadyExistsConnection(bool alreadyExists)
         {
             _connectionRepositoryMock
-                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Expression<Func<Connection,bool>>>()))
+                .Setup(m => m.AlreadyExistsAsync(It.IsAny<Expression<Func<Connection, bool>>>()))
                 .Returns(Task.FromResult(alreadyExists));
         }
 

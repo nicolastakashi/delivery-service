@@ -4,6 +4,7 @@ using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
 using DeliveryService.Infra.Api.Controller;
 using DeliveryService.Infra.Api.Response;
+using DeliveryService.Infra.Data.Context;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,13 @@ namespace DeliveryService.Api.Controllers
     {
         private readonly IMediator _bus;
         private readonly IPointReadOnlyRepository _pointReadOnlyRepository;
+        private readonly IRedisContext _redisContext;
 
-        public PointController(IMediator bus, IPointReadOnlyRepository pointReadOnlyRepository)
+        public PointController(IMediator bus, IPointReadOnlyRepository pointReadOnlyRepository, IRedisContext redisContext)
         {
             _bus = bus;
             _pointReadOnlyRepository = pointReadOnlyRepository;
+            _redisContext = redisContext;
         }
 
         [HttpPost, Authorize(Roles = "Admin")]
@@ -79,9 +82,9 @@ namespace DeliveryService.Api.Controllers
         [HttpGet, Authorize]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<PointQueryResult>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resourceQuery)
+        public async Task<IActionResult> Find([FromQuery]GetPagedResourceQuery resource)
         {
-            var points = await _pointReadOnlyRepository.GetAsync(resourceQuery);
+            var points = await _pointReadOnlyRepository.GetAsync(resource);
 
             return Success(points);
         }

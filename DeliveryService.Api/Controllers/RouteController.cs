@@ -1,9 +1,13 @@
 ﻿using DeliveryService.Domain.Commands;
+using DeliveryService.Domain.Enums;
 using DeliveryService.Domain.Queries;
 using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
+using DeliveryService.Domain.ValueObject;
 using DeliveryService.Infra.Api.Controller;
 using DeliveryService.Infra.Api.Response;
+using DeliveryService.Infra.Data.Constants;
+using DeliveryService.Infra.Data.Context;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +22,13 @@ namespace DeliveryService.Api.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IRouteReadOnlyRepository _routeReadOnlyRepository;
+        private readonly IRedisContext _redisContext;
 
-        public RouteController(IMediator mediator, IRouteReadOnlyRepository routeReadOnlyRepository)
+        public RouteController(IMediator mediator, IRouteReadOnlyRepository routeReadOnlyRepository, IRedisContext redisContext)
         {
             _mediator = mediator;
             _routeReadOnlyRepository = routeReadOnlyRepository;
+            _redisContext = redisContext;
         }
 
         [HttpPost, Authorize(Roles = "Admin")]
@@ -66,11 +72,34 @@ namespace DeliveryService.Api.Controllers
         [HttpGet, Authorize]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<RoutesQueryResult>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Get([FromQuery]GetPagedResourceQuery resourceQuery)
+        public async Task<IActionResult> Get([FromQuery]GetPagedResourceQuery resource)
         {
-            var routes = await _routeReadOnlyRepository.GetAsync(resourceQuery);
+            var routes = await _routeReadOnlyRepository.GetAsync(resource);
 
             return Success(routes);
+        }
+
+        [HttpGet("{id}"), Authorize]
+        [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<RoutesQueryResult>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Find([FromRoute]string id, [FromQuery]UnitOfMeasure unitOfMeasure)
+        {
+            var cacheKey = $"{CacheKeys.Routes}:{id}";
+
+            var routePath = _redisContext.Get<BestRoutePath>(cacheKey);
+
+            if (routePath is null)
+            {
+                var result = await _mediator.Send(new FindTheBestRoutePathCommand(id, unitOfMeasure));
+
+                if (result.Success is false) return Error(result.ErrorMessage);
+
+                routePath = result.Value;
+
+                _routeReadOnlyRepository.SaveOnCache(cacheKey, routePath);
+            }
+
+            return Success(routePath);
         }
     }
 }
