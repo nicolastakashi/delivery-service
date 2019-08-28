@@ -11,16 +11,14 @@ namespace DeliveryService.Domain.ValueObject
         public Point Destination { get; set; }
         public IEnumerable<Point> WayPoints { get; set; }
         public decimal Weight { get; set; }
-        public UnitOfMeasure UnitOfMeasure { get; set; }
 
-        public BestRoutePath(ObjectId routeId, Point origin, Point destination, IEnumerable<Point> wayPoints, decimal weight, UnitOfMeasure unitOfMeasure)
+        public BestRoutePath(ObjectId routeId, Point origin, Point destination, IEnumerable<Point> wayPoints, decimal weight)
         {
             RouteId = routeId;
             Origin = origin;
             Destination = destination;
             WayPoints = wayPoints;
             Weight = weight;
-            UnitOfMeasure = unitOfMeasure;
         }
     }
 }

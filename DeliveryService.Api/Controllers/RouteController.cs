@@ -1,5 +1,4 @@
 ﻿using DeliveryService.Domain.Commands;
-using DeliveryService.Domain.Enums;
 using DeliveryService.Domain.Queries;
 using DeliveryService.Domain.Queries.Result;
 using DeliveryService.Domain.Repositories.Readonly;
@@ -82,7 +81,7 @@ namespace DeliveryService.Api.Controllers
         [HttpGet("{id}"), Authorize]
         [ProducesResponseType(typeof(BaseEnvelopeResponse<PagedQueryResult<RoutesQueryResult>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(EnvelopeResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Find([FromRoute]string id, [FromQuery]UnitOfMeasure unitOfMeasure)
+        public async Task<IActionResult> Find([FromRoute]string id)
         {
             var cacheKey = $"{CacheKeys.Routes}:{id}";
 
@@ -90,7 +89,7 @@ namespace DeliveryService.Api.Controllers
 
             if (routePath is null)
             {
-                var result = await _mediator.Send(new FindTheBestRoutePathCommand(id, unitOfMeasure));
+                var result = await _mediator.Send(new FindTheBestRoutePathCommand(id));
 
                 if (result.Success is false) return Error(result.ErrorMessage);
 

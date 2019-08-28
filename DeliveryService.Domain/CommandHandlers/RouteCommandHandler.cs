@@ -109,7 +109,7 @@ namespace DeliveryService.Domain.CommandHandlers
             var points = await _pointRepository.GetAllActivePoints();
             var connections = await _connectionRepository.GetAllActiveConnections();
 
-            return new RouteService(command.UnitOfMeasure, connections, points).FindBestPath(route);
+            return new RouteService(connections, points).FindBestPath(route);
         }
     }
 }

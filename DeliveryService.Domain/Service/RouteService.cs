@@ -10,13 +10,11 @@ namespace DeliveryService.Domain.Service
     {
         private readonly Dijkstra _dijkstra;
         private readonly Point[] _points;
-        private readonly UnitOfMeasure _unitOfMeasure;
 
-        public RouteService(UnitOfMeasure unitOfMeasure, Connection[] connections, Point[] points)
+        public RouteService(Connection[] connections, Point[] points)
         {
             _dijkstra = Dijkstra.Setup(connections, points);
             _points = points;
-            _unitOfMeasure = unitOfMeasure;
         }
 
         public DomainResult<BestRoutePath> FindBestPath(Route route)
@@ -30,7 +28,7 @@ namespace DeliveryService.Domain.Service
             }
 
             var weight = path.Last().Distance;
-            var result = new BestRoutePath(route.Id, route.Origin, route.Destination, wayPoints, weight, _unitOfMeasure);
+            var result = new BestRoutePath(route.Id, route.Origin, route.Destination, wayPoints, weight);
 
             return DomainResult.Ok(result);
         }
