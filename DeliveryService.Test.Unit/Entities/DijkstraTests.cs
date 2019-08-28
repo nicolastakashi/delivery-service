@@ -11,6 +11,8 @@ namespace DeliveryService.Test.Unit.Entities
     {
         private static List<Point> _points;
         private static List<Connection> _connections;
+        private readonly Dijkstra _dijkstra;
+
         public DijkstraTests()
         {
             _points = new List<Point>
@@ -40,20 +42,28 @@ namespace DeliveryService.Test.Unit.Entities
                 new Connection(_points.FirstOrDefault(x => x.Name == "F"), _points.FirstOrDefault(x => x.Name == "I"), 45, 50),
                 new Connection(_points.FirstOrDefault(x => x.Name == "I"), _points.FirstOrDefault(x => x.Name == "B"), 65, 5),
             };
+
+            _dijkstra = new Dijkstra(_points.ToArray());
         }
 
         [Fact]
         public void Dijkstra_WithPoints_SetupSuccess()
         {
-            var dijkstra = new Dijkstra(_points.ToArray());
-
-            dijkstra.Count.Should().Be(_points.Count);
+            _dijkstra.Count.Should().Be(_points.Count);
         }
 
         [Fact]
         public void Dijkstra_Find_BestPath_BetWeen_A_And_E_Success()
         {
+            // Arrange
+            var origin = _points.First(x => x.Name == "A");
+            var destination = _points.First(x => x.Name == "E");
 
+            //Act
+            var result = _dijkstra.FindBestPath(origin.Id, destination.Id);
+
+            // Assert
+            result.Should().HaveCount(3);
         }
     }
 }
