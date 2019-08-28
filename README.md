@@ -18,6 +18,7 @@ Based on what was required and the information contained in the specification, a
 - Docker & Docker Compose
 - Fluent Assertions
 - Swagger
+- GZip
 
 ### Patterns and Principles
 
@@ -58,3 +59,47 @@ Integration tests have a high execution cost when compared to unit tests, becaus
 To run the integration tests through the console just run the command below:
 
 `` $ dotnet test .\DeliveryService.Test.Integration\DeliveryService.Test.Integration.csproj``
+
+## Improvements and evolutions.
+
+### Resilience
+Implementation of resilience patterns such as Retry Pattern and Circuit Breaker.
+
+To ensure the resiliency of our service, we can perform this implementation using Polly which is an extremely simple and consolient library in the .NET world.
+
+### Rate Limit
+In the current solution the service is not addressing the rate limit issue, but it is an implementation that should be performed if the company in question does not have an API Management, there are some options to perform this implementation either through an API Management / API Gateway or using a package called ** AspNetCoreRateLimit **
+
+### Performance Tests
+Due to task priority, no performance testing has been implemented, this implementation could be prioritized at or near time, so we can implement it using Apache JMeter or some similar tool.
+
+### Build Pipeline.
+Adding the application to a Build mat so that we can ensure the integration of all commits made by the team.
+
+### Message Queue
+
+A necessary implementation due to the design adopted would be background processes using a message queue reacting to our service event.
+
+Currently the entities of routes and connections are aggregates that contain their information and a value object that represents a point.
+
+It is necessary to implement a mechanism that every time a point is updated, it has a service that reacts to the event in order to update the routes and connections that use the point in question.
+
+### Code Coverage
+
+We currently do not have any tools to measure the unit testing coverage of our application.
+
+### XML Docs
+Improve API specification by using Swagger integration with XML Docs, so we can make it clear to those who are consuming the service what each item does.
+
+And it would make integration with client-generating tools for services based on the Open API specification even better.
+
+### HATOAS
+Implement HATOAS to make service consumption simpler and more fluid so that the service is high explanatory.
+
+### Architecture Evolution
+
+Currently we have a simple and decoupled architecture, but with the evolution of the project it is necessary to emerge the architecture.
+
+Perform further separation of responsibilities from the domain layer, perhaps by separating into contexts or creating a core domain layer.
+
+Continue the implementation of unit tests in order to have greater test coverage, especially in the Dijkstra algorithm part.

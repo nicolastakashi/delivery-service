@@ -1,5 +1,6 @@
 ﻿using DeliveryService.Domain.Commands;
 using DeliveryService.Domain.Entities;
+using DeliveryService.Domain.Events;
 using DeliveryService.Domain.Repositories.Write;
 using DeliveryService.Domain.Service;
 using DeliveryService.Domain.ValueObject;
@@ -20,12 +21,14 @@ namespace DeliveryService.Domain.CommandHandlers
         private readonly IPointRepository _pointRepository;
         private readonly IRouteRepository _routeRepository;
         private readonly IConnectionRepository _connectionRepository;
+        private readonly IMediator _mediator;
 
-        public RouteCommandHandler(IPointRepository pointRepository, IRouteRepository routeRepository, IConnectionRepository connectionRepository)
+        public RouteCommandHandler(IPointRepository pointRepository, IRouteRepository routeRepository, IConnectionRepository connectionRepository, IMediator mediator)
         {
             _pointRepository = pointRepository;
             _routeRepository = routeRepository;
             _connectionRepository = connectionRepository;
+            _mediator = mediator;
         }
 
         public async Task<DomainResult<ObjectId>> Handle(CreateRouteCommand command, CancellationToken cancellationToken)
@@ -46,6 +49,8 @@ namespace DeliveryService.Domain.CommandHandlers
             }
 
             await _routeRepository.CreateAsync(route);
+
+            await _mediator.Publish(new RouteCreatedEvent(route));
 
             return DomainResult.Ok(route.Id);
         }
@@ -78,6 +83,8 @@ namespace DeliveryService.Domain.CommandHandlers
 
             await _routeRepository.UpdateAsync(route);
 
+            await _mediator.Publish(new RouteUpdatedEvent(route));
+
             return DomainResult.Ok();
         }
 
@@ -93,6 +100,8 @@ namespace DeliveryService.Domain.CommandHandlers
             route.Inactive();
 
             await _routeRepository.UpdateAsync(route);
+
+            await _mediator.Publish(new RouteInactivatedEvent(route));
 
             return DomainResult.Ok();
         }

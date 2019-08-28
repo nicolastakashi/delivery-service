@@ -29,7 +29,7 @@ namespace DeliveryService.Test.Integration.Controllers
         {
             var command = new Faker<CreateRouteCommand>()
                 .RuleFor(p => p.OriginPointId, "5d6441a042a56c173573234a")
-                .RuleFor(p => p.DestinationPointId, "5d6441ecdab0be906c200a72")
+                .RuleFor(p => p.DestinationPointId, "5d6441aa55b37e484313f1ab")
                 .Generate();
 
             using (var content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))

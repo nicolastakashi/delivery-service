@@ -69,7 +69,7 @@ namespace DeliveryService.Test.Integration.Controllers
         {
             var command = new Faker<UpdatePointCommand>()
                 .RuleFor(p => p.Id, _id)
-                .RuleFor(p => p.Name, v => v.Lorem.Letter())
+                .RuleFor(p => p.Name, v => v.Lorem.Letter(10))
                 .Generate();
 
             using (var content = new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"))

@@ -38,6 +38,10 @@ namespace DeliveryService.Infra.IoC
             services.AddScoped<INotificationHandler<ConnectionCreatedEvent>, ConnectionEventHandler>();
             services.AddScoped<INotificationHandler<ConnectionUpdatedEvent>, ConnectionEventHandler>();
             services.AddScoped<INotificationHandler<ConnectionInactivatedEvent>, ConnectionEventHandler>();
+
+            services.AddScoped<INotificationHandler<RouteCreatedEvent>, RouteEventHandler>();
+            services.AddScoped<INotificationHandler<RouteUpdatedEvent>, RouteEventHandler>();
+            services.AddScoped<INotificationHandler<RouteInactivatedEvent>, RouteEventHandler>();
         }
 
         private static void RegisterCommands(IServiceCollection services)
