@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  deliveryservice.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Testing
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "56020:80"
+    depends_on:
+      - mongo
+  mongo:
+    ports:
+      - "27018:27017"
+  redis:
+    ports:
+      - "6320:6379"

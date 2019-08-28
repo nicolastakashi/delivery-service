@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  deliveryservice.api:
+    image: ${DOCKER_REGISTRY-}deliveryserviceapi
+    build:
+      context: .
+      dockerfile: DeliveryService.Api/Dockerfile
+  mongo:
+    restart: always
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+  redis:
+    image: redis
