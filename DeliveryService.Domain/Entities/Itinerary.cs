@@ -8,7 +8,13 @@ namespace DeliveryService.Domain.Entities
         public decimal Distance { get; set; }
         public ObjectId Point { get; set; }
 
-        internal bool ShoulUpdateDistanceAndPoin(decimal calculatedDistance, bool isFirstRemove)
+        public Itinerary(ObjectId point, decimal distance)
+        {
+            Point = point;
+            Distance = distance;
+        }
+
+        internal bool ShouldUpdateDistanceAndPoint(decimal calculatedDistance, bool isFirstRemove)
             => calculatedDistance < Distance || isFirstRemove;
 
         internal void Update(ObjectId node, decimal calculatedDistance)

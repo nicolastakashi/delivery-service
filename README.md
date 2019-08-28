@@ -19,6 +19,9 @@ Based on what was required and the information contained in the specification, a
 - Fluent Assertions
 - Swagger
 - GZip
+- Redis
+- XUnit
+- Fluent Assertions
 
 ### Patterns and Principles
 
@@ -42,7 +45,29 @@ To get the localhost solution running we just need the following tools:
 
 After cloning the project and having the above tools installed, simply run the command below to run the localhost application:
 
-`` $ docker-compose -f docker-compose.yml -f docker-compose.override.yml``
+`` $ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d``
+
+That done we will have our application running, just access the address below and you will see the Swagger homepage with all the specification of service endpoints:
+
+Service Address: https: // localhost: 44372 / index.html
+
+There is a data load on the service with all points and connections between points that existed in the problem statement.
+
+There are currently two registered users:
+
+### Admin: 
+Admin can manage all information regarding Points, Point Connections and Routes.
+
+**Email:** admin@deliveryservice.com
+
+**Password:** admin
+
+### User:
+User can only queries the platform information.
+
+**Email:** user@deliveryservice.com
+
+**Password:** user
 
 ## Running the tests.
 

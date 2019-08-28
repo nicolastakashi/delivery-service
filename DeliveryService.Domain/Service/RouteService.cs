@@ -22,7 +22,7 @@ namespace DeliveryService.Domain.Service
             var path = _dijkstra.FindBestPath(route.Origin.Id, route.Destination.Id);
             var wayPoints = FindWayPoints(path, route.Origin, route.Destination);
 
-            if (wayPoints.Any() is false)
+            if (wayPoints.Any() is false || path.Any() is false)
             {
                 return DomainResult.Failure<BestRoutePath>("Theres is no exist a valid path for this route");
             }

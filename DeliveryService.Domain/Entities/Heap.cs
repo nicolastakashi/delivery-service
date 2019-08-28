@@ -8,14 +8,14 @@ namespace DeliveryService.Domain.Entities
         private readonly IComparer<T> comparer;
         private readonly List<T> list = new List<T>();
 
-        public Heap() : this(default(IComparer<T>)) { }
+        public Heap() : this(default) { }
 
         public Heap(IComparer<T> comparer)
         {
             this.comparer = comparer ?? Comparer<T>.Default;
         }
 
-        public Heap(T element, Comparison<T> comparison) : this(Comparer<T>.Create(comparison)) { this.Push(element); }
+        public Heap(T element, Comparison<T> comparison) : this(Comparer<T>.Create(comparison)) { Push(element); }
 
         public int Count => list.Count - 1;
 

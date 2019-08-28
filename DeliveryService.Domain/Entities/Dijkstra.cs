@@ -9,7 +9,7 @@ namespace DeliveryService.Domain.Entities
     public sealed class Dijkstra
     {
         private readonly Dictionary<ObjectId, List<Edge>> _adjacents = new Dictionary<ObjectId, List<Edge>>();
-        private const decimal MAX = decimal.MaxValue / 2;
+        private const decimal MAX = decimal.MaxValue;
 
         private Dijkstra(Point[] points)
         {
@@ -18,15 +18,15 @@ namespace DeliveryService.Domain.Entities
 
         public static Dijkstra Setup(Connection[] connections, Point[] points)
         {
-            var Dijkstra = new Dijkstra(points);
+            var dijkstra = new Dijkstra(points);
 
             for (int index = 0; index < connections.Count(); index++)
             {
                 var weight = connections[index].Cost * connections[index].Time;
-                Dijkstra.AddEdge(connections[index].Origin.Id, connections[index].Destination.Id, weight);
+                dijkstra.AddEdge(connections[index].Origin.Id, connections[index].Destination.Id, weight);
             }
 
-            return Dijkstra;
+            return dijkstra;
         }
 
         private void MapPointToAdjacents(Point[] points)
@@ -52,54 +52,59 @@ namespace DeliveryService.Domain.Entities
         public IEnumerable<Itinerary> FindBestPath(ObjectId origin, ObjectId destination)
         {
             var itineraries = BuildEstimatedItineraries();
-            var visited = new Dictionary<ObjectId, bool>();
+            var visitedNodes = new Dictionary<ObjectId, bool>();
 
             itineraries[origin].Distance = 0;
 
-            var heap = new Heap<(ObjectId node, decimal distance)>((origin, 0), (a, b) => a.distance.CompareTo(b.distance));
-            heap.Push((origin, 0));
-
-            var originEdges = _adjacents[origin];
-            var faultedEdges = new List<ObjectId>(_adjacents.Count);
-            var isFirstRemove = false;
+            var heap = new Heap<Itinerary>(new Itinerary(origin, 0), (a, b) => a.Distance.CompareTo(b.Distance));
+            heap.Push(new Itinerary(origin, 0));
+            
+            Edge edge;
+            Itinerary node;
+            Itinerary point;
+            List<Edge> edges;
+            Itinerary itinerary;
+            List<ObjectId> faultedEdges = new List<ObjectId>(_adjacents.Count);
+            bool wasFaultRemoved = false;
 
             while (heap.Count > 0)
             {
-                var (node, distance) = heap.Pop();
+                node = heap.Pop();
 
-                if (visited.ContainsKey(node)) continue;
+                if (visitedNodes.ContainsKey(node.Point)) continue;
 
-                var edges = _adjacents[node];
+                edges = _adjacents[node.Point];
 
-                foreach (var edge in edges)
+                for (int i = 0; i < edges.Count; i++)
                 {
-                    bool shoulRemoveEdgeFault = ShoulRemoveEdgeFault(origin, originEdges, faultedEdges, node, edge.Id);
+                    edge = edges[i];
+                    bool shoulRemoveEdgeFault = ShouldRemoveEdgeFault(origin, _adjacents[origin], faultedEdges, node.Point, edge.Id);
 
-                    if (visited.ContainsKey(edge.Id) && shoulRemoveEdgeFault == false) continue;
+                    if (visitedNodes.ContainsKey(edge.Id) && shoulRemoveEdgeFault == false) continue;
 
-                    var itinerary = itineraries[node];
-                    var point = itineraries[edge.Id];
+                    itinerary = itineraries[node.Point];
+                    point = itineraries[edge.Id];
 
-                    if (ShouldAddToFaultedList(originEdges, faultedEdges, edge.Id)) AddToFaultedList(faultedEdges, edge.Id);
+                    if (ShouldAddToFaultedList(_adjacents[origin], faultedEdges, edge.Id)) AddToFaultedList(faultedEdges, edge.Id);
 
-                    if (shoulRemoveEdgeFault && isFirstRemove is false) isFirstRemove = true;
-                    
+                    if (shoulRemoveEdgeFault && wasFaultRemoved is false) wasFaultRemoved = true;
+
                     decimal calculatedDistance = CalculateDistance(edge, itinerary);
 
-                    if (point.ShoulUpdateDistanceAndPoin(calculatedDistance, isFirstRemove))
+                    if (point.ShouldUpdateDistanceAndPoint(calculatedDistance, wasFaultRemoved && visitedNodes.ContainsKey(edge.Id)))
                     {
-                        point.Update(node, calculatedDistance);
-                        heap.Push((edge.Id, calculatedDistance));
+                        point.Update(node.Point, calculatedDistance);
+                        heap.Push(new Itinerary(edge.Id, calculatedDistance));
                     }
                 }
 
-                visited[node] = true;
+                visitedNodes[node.Point] = true;
             }
 
             return Path(origin, destination, itineraries).Reverse();
         }
 
-        private static decimal CalculateDistance(Edge edge, Itinerary itinerary) 
+        private static decimal CalculateDistance(Edge edge, Itinerary itinerary)
             => itinerary.Distance + edge.Weight;
 
         private static void AddToFaultedList(List<ObjectId> faultedEdges, ObjectId point) => faultedEdges.Add(point);
@@ -107,17 +112,25 @@ namespace DeliveryService.Domain.Entities
         private static bool ShouldAddToFaultedList(List<Edge> originEdges, List<ObjectId> faultedEdges, ObjectId point)
             => faultedEdges.Any(y => y == point) is false && originEdges.Any(x => x.Id == point);
 
-        private static bool ShoulRemoveEdgeFault(ObjectId origin, List<Edge> originEdges, List<ObjectId> faultedEdges, ObjectId node, ObjectId point)
+        private static bool ShouldRemoveEdgeFault(ObjectId origin, List<Edge> originEdges, List<ObjectId> faultedEdges, ObjectId node, ObjectId point)
             => node != origin && faultedEdges.Any(x => x == point) && originEdges.Any(x => x.Id == point);
 
         public IEnumerable<Itinerary> Path(ObjectId start, ObjectId end, Dictionary<ObjectId, Itinerary> itineraries)
         {
-            yield return new Itinerary { Distance = itineraries[end].Distance, Point = end };
+            var result = new List<Itinerary>(itineraries.Count);
+
+            if (end == itineraries[end].Point) return result;
+
+            result.Add(new Itinerary(end, itineraries[end].Distance));
 
             for (var i = end; i != start; i = itineraries[i].Point)
             {
-                yield return new Itinerary { Distance = itineraries[itineraries[i].Point].Distance, Point = itineraries[i].Point };
+                result.Add(new Itinerary(itineraries[i].Point, itineraries[itineraries[i].Point].Distance));
             }
+
+            if (result.Count < 3) result.RemoveAll(x => true);
+
+            return result;
         }
 
         private Dictionary<ObjectId, Itinerary> BuildEstimatedItineraries()
@@ -126,7 +139,7 @@ namespace DeliveryService.Domain.Entities
 
             foreach (var item in _adjacents)
             {
-                itineraries.Add(item.Key, new Itinerary { Distance = MAX, Point = item.Key });
+                itineraries.Add(item.Key, new Itinerary(item.Key, MAX));
             }
 
             return itineraries;
