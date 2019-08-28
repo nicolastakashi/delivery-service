@@ -49,7 +49,7 @@ After cloning the project and having the above tools installed, simply run the c
 
 That done we will have our application running, just access the address below and you will see the Swagger homepage with all the specification of service endpoints:
 
-Service Address: https: // localhost: 44372 / index.html
+Service Address: https://localhost:44372
 
 There is a data load on the service with all points and connections between points that existed in the problem statement.
 
@@ -69,7 +69,7 @@ User can only queries the platform information.
 
 **Password:** user
 
-## Running the tests.
+## Running the tests
 
 Currently there are two types of tests implemented, unit tests and integration tests, were implemented in separate projects, so we can run either test separately.
 
@@ -85,7 +85,7 @@ To run the integration tests through the console just run the command below:
 
 `` $ dotnet test .\DeliveryService.Test.Integration\DeliveryService.Test.Integration.csproj``
 
-## Improvements and evolutions.
+## Improvements and evolutions
 
 ### Resilience
 Implementation of resilience patterns such as Retry Pattern and Circuit Breaker.
@@ -93,13 +93,19 @@ Implementation of resilience patterns such as Retry Pattern and Circuit Breaker.
 To ensure the resiliency of our service, we can perform this implementation using Polly which is an extremely simple and consolient library in the .NET world.
 
 ### Rate Limit
-In the current solution the service is not addressing the rate limit issue, but it is an implementation that should be performed if the company in question does not have an API Management, there are some options to perform this implementation either through an API Management / API Gateway or using a package called ** AspNetCoreRateLimit **
+In the current solution the service is not addressing the rate limit issue, but it is an implementation that should be performed if the company in question does not have an API Management, there are some options to perform this implementation either through an API Management/API Gateway or using a package called **AspNetCoreRateLimit**
 
 ### Performance Tests
 Due to task priority, no performance testing has been implemented, this implementation could be prioritized at or near time, so we can implement it using Apache JMeter or some similar tool.
 
-### Build Pipeline.
-Adding the application to a Build mat so that we can ensure the integration of all commits made by the team.
+### Build Pipeline
+Adding the service within an automated build and deploy pipeline to ensure the integration of developed code and streamline the deployment process in multiple environments.
+
+This kind of process can be done by tools such as:
+
+- Jenkins
+- Azure DevOps
+- Circle CI
 
 ### Message Queue
 
@@ -111,7 +117,11 @@ It is necessary to implement a mechanism that every time a point is updated, it 
 
 ### Code Coverage
 
-We currently do not have any tools to measure the unit testing coverage of our application.
+At this first moment no code coverage tool was implemented for unit testing.
+
+This type of implementation can be done using **Open Cover** and **Report Generator**.
+
+This would allow us to have reports of our project code coverage within our automated build process.
 
 ### XML Docs
 Improve API specification by using Swagger integration with XML Docs, so we can make it clear to those who are consuming the service what each item does.
@@ -120,6 +130,16 @@ And it would make integration with client-generating tools for services based on
 
 ### HATOAS
 Implement HATOAS to make service consumption simpler and more fluid so that the service is high explanatory.
+
+### SDK and Code Samples
+
+In the case of a public service it is necessary to implement code examples to assist customers who are consuming the service.
+
+And in an ideal world there is an SDK abstracting all the complexity and providing a Fluent API for customers who consume the service.
+
+### Refresh Token
+
+To increase the security of our service, we need to implement a refresh token strategy so that authentication tokens would have a lifetime and every time a token expires we would be able to renew your access.
 
 ### Architecture Evolution
 
