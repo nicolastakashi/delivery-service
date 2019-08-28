@@ -43,7 +43,7 @@ namespace DeliveryService.Test.Unit.Entities
                 new Connection(_points.FirstOrDefault(x => x.Name == "I"), _points.FirstOrDefault(x => x.Name == "B"), 65, 5),
             };
 
-            _dijkstra = new Dijkstra(_points.ToArray());
+            _dijkstra = Dijkstra.Setup(_connections.ToArray(), _points.ToArray());
         }
 
         [Fact]
@@ -58,12 +58,13 @@ namespace DeliveryService.Test.Unit.Entities
             // Arrange
             var origin = _points.First(x => x.Name == "A");
             var destination = _points.First(x => x.Name == "E");
-
+            var wayPoint = _points.First(x => x.Name == "H");
             //Act
             var result = _dijkstra.FindBestPath(origin.Id, destination.Id);
 
             // Assert
             result.Should().HaveCount(3);
+            result.FirstOrDefault(x => x.Point == wayPoint.Id).Should().NotBeNull();
         }
     }
 }

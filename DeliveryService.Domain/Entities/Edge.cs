@@ -4,7 +4,7 @@ namespace DeliveryService.Domain.Entities
 {
     public sealed class Edge
     {
-        public ObjectId Node { get; private set; }
+        public ObjectId Id { get; private set; }
         public decimal Weight { get; private set; }
 
         public Edge()
@@ -13,7 +13,7 @@ namespace DeliveryService.Domain.Entities
 
         public Edge(ObjectId node, decimal weight)
         {
-            Node = node;
+            Id = node;
             Weight = weight;
         }
     }

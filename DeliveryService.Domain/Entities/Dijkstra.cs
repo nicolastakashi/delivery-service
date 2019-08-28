@@ -6,14 +6,27 @@ using System.Linq;
 
 namespace DeliveryService.Domain.Entities
 {
-    public sealed class Dijkstra 
+    public sealed class Dijkstra
     {
         private readonly Dictionary<ObjectId, List<Edge>> _adjacents = new Dictionary<ObjectId, List<Edge>>();
         private const decimal MAX = decimal.MaxValue / 2;
 
-        public Dijkstra (Point[] points)
+        private Dijkstra(Point[] points)
         {
             MapPointToAdjacents(points);
+        }
+
+        public static Dijkstra Setup(Connection[] connections, Point[] points)
+        {
+            var Dijkstra = new Dijkstra(points);
+
+            for (int index = 0; index < connections.Count(); index++)
+            {
+                var weight = connections[index].Cost * connections[index].Time;
+                Dijkstra.AddEdge(connections[index].Origin.Id, connections[index].Destination.Id, weight);
+            }
+
+            return Dijkstra;
         }
 
         private void MapPointToAdjacents(Point[] points)
@@ -25,7 +38,7 @@ namespace DeliveryService.Domain.Entities
         }
 
         public int Count => _adjacents.Count;
-        public bool HasEdge(ObjectId origin, ObjectId destination) => _adjacents[origin].Any(p => p.Node == destination);
+        public bool HasEdge(ObjectId origin, ObjectId destination) => _adjacents[origin].Any(p => p.Id == destination);
 
         public bool AddEdge(ObjectId origin, ObjectId destination, decimal weight)
         {
@@ -60,31 +73,23 @@ namespace DeliveryService.Domain.Entities
 
                 foreach (var edge in edges)
                 {
-                    var point = edge.Node;
+                    bool shoulRemoveEdgeFault = ShoulRemoveEdgeFault(origin, originEdges, faultedEdges, node, edge.Id);
 
-                    var shouldRemoveFaulted = node != origin && faultedEdges.Any(x => x == point) && originEdges.Any(x => x.Node == point);
-
-                    if (visited.ContainsKey(point) && shouldRemoveFaulted is false) continue;
+                    if (visited.ContainsKey(edge.Id) && shoulRemoveEdgeFault == false) continue;
 
                     var itinerary = itineraries[node];
-                    var itineraryPoint = itineraries[point];
+                    var point = itineraries[edge.Id];
 
-                    if (faultedEdges.Any(y => y == point) is false && originEdges.Any(x => x.Node == point)) faultedEdges.Add(point);
+                    if (ShouldAddToFaultedList(originEdges, faultedEdges, edge.Id)) AddToFaultedList(faultedEdges, edge.Id);
 
+                    if (shoulRemoveEdgeFault && isFirstRemove is false) isFirstRemove = true;
+                    
+                    decimal calculatedDistance = CalculateDistance(edge, itinerary);
 
-                    if (shouldRemoveFaulted && isFirstRemove is false)
+                    if (point.ShoulUpdateDistanceAndPoin(calculatedDistance, isFirstRemove))
                     {
-                        isFirstRemove = true;
-                    }
-
-                    decimal calcDistance = itinerary.Distance + edge.Weight;
-
-                    if (calcDistance < itineraryPoint.Distance || isFirstRemove)
-                    {
-                        itineraryPoint.Point = node;
-                        itineraryPoint.Distance = calcDistance;
-
-                        heap.Push((point, calcDistance));
+                        point.Update(node, calculatedDistance);
+                        heap.Push((edge.Id, calculatedDistance));
                     }
                 }
 
@@ -93,6 +98,17 @@ namespace DeliveryService.Domain.Entities
 
             return Path(origin, destination, itineraries).Reverse();
         }
+
+        private static decimal CalculateDistance(Edge edge, Itinerary itinerary) 
+            => itinerary.Distance + edge.Weight;
+
+        private static void AddToFaultedList(List<ObjectId> faultedEdges, ObjectId point) => faultedEdges.Add(point);
+
+        private static bool ShouldAddToFaultedList(List<Edge> originEdges, List<ObjectId> faultedEdges, ObjectId point)
+            => faultedEdges.Any(y => y == point) is false && originEdges.Any(x => x.Id == point);
+
+        private static bool ShoulRemoveEdgeFault(ObjectId origin, List<Edge> originEdges, List<ObjectId> faultedEdges, ObjectId node, ObjectId point)
+            => node != origin && faultedEdges.Any(x => x == point) && originEdges.Any(x => x.Id == point);
 
         public IEnumerable<Itinerary> Path(ObjectId start, ObjectId end, Dictionary<ObjectId, Itinerary> itineraries)
         {

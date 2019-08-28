@@ -8,20 +8,20 @@ namespace DeliveryService.Domain.Service
 {
     public sealed class RouteService
     {
-        private readonly Dijkstra _graph;
+        private readonly Dijkstra _dijkstra;
         private readonly Point[] _points;
         private readonly UnitOfMeasure _unitOfMeasure;
 
         public RouteService(UnitOfMeasure unitOfMeasure, Connection[] connections, Point[] points)
         {
-            _graph = DijkstraSetup(unitOfMeasure, connections, points);
+            _dijkstra = Dijkstra.Setup(connections, points);
             _points = points;
             _unitOfMeasure = unitOfMeasure;
         }
 
         public DomainResult<BestRoutePath> FindBestPath(Route route)
         {
-            var path = _graph.FindBestPath(route.Origin.Id, route.Destination.Id);
+            var path = _dijkstra.FindBestPath(route.Origin.Id, route.Destination.Id);
             var wayPoints = FindWayPoints(path, route.Origin, route.Destination);
 
             if (wayPoints.Any() is false)
@@ -39,19 +39,6 @@ namespace DeliveryService.Domain.Service
         {
             var wayPointsId = bestPath.Where(x => x.Point != origin.Id && x.Point != destination.Id).Select(x => x.Point);
             return _points.Where(x => wayPointsId.Contains(x.Id));
-        }
-
-        private Dijkstra DijkstraSetup(UnitOfMeasure unitOfMeasure, Connection[] connections, Point[] points)
-        {
-            var Dijkstra = new Dijkstra(points);
-
-            for (int index = 0; index < connections.Count(); index++)
-            {
-                var weight = connections[index].Cost * connections[index].Time;
-                Dijkstra.AddEdge(connections[index].Origin.Id, connections[index].Destination.Id, weight);
-            }
-
-            return Dijkstra;
         }
     }
 }
